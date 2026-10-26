@@ -1,0 +1,144 @@
+{
+  "schema": 3,
+  "updated": "2026-10-25",
+  "notes": "Joiner skill = the hero's first expedition skill only. Same id adds, different ids multiply. side: off = damage you deal, def = damage you take. id 'other' = a leader skill that does not share a group with any joiner, so it never changes which joiners are best. wheel = the Hero Roulette hero for its generation (one per gen; most players are told to get it). staple = a joiner most players were told to build early, so it never counts as new. alwaysLead = a common lead hero in any generation window (counted in Likely wanted even when older). widget = the exclusive weapon Expedition skill at max level (kingshotdata.com, 2026-10-25); when: rally = fires only when this hero leads a rally, defend = fires only when defending or garrisoning. Solo marches never get widget bonuses. conf: high = 2+ trusted sources agree; medium = one source; low = matched by hand from skill wording.",
+  "groups": {
+    "101": {"label": "Lethality up / damage up", "side": "off"},
+    "102": {"label": "Attack up", "side": "off"},
+    "301": {"label": "Enemy defense down", "side": "off"},
+    "111": {"label": "Damage taken down", "side": "def"},
+    "112": {"label": "Defense up", "side": "def"},
+    "113": {"label": "Health up", "side": "def"},
+    "201": {"label": "Enemy damage down", "side": "def"},
+    "202": {"label": "Enemy attack down", "side": "def"},
+    "203?": {"label": "Enemy lethality down", "side": "def"}
+  },
+  "joiners": [
+    {"hero": "Chenko",   "gen": 1, "effects": [{"id": "101", "pct": 25}], "epic": true, "conf": "high"},
+    {"hero": "Yeonwoo",  "gen": 1, "effects": [{"id": "101", "pct": 25}], "epic": true, "conf": "high"},
+    {"hero": "Amadeus",  "gen": 1, "effects": [{"id": "101", "pct": 25}], "conf": "high", "exclude": "Usually kept as a lead hero; Chenko and Yeonwoo give the same 25% lethality as joiners."},
+    {"hero": "Amane",    "gen": 1, "effects": [{"id": "102", "pct": 25}], "epic": true, "conf": "high"},
+    {"hero": "Howard",   "gen": 1, "effects": [{"id": "111", "pct": 20}], "epic": true, "conf": "high"},
+    {"hero": "Quinn",    "gen": 1, "effects": [{"id": "111", "pct": 20}], "epic": true, "conf": "high"},
+    {"hero": "Gordon",   "gen": 1, "effects": [{"id": "113", "pct": 25}], "epic": true, "conf": "high"},
+    {"hero": "Fahd",     "gen": 1, "effects": [{"id": "201", "pct": 20}], "epic": true, "conf": "high"},
+    {"hero": "Saul",     "gen": 1, "effects": [{"id": "112", "pct": 10}, {"id": "113", "pct": 15}], "wheel": true, "conf": "high"},
+    {"hero": "Hilde",    "gen": 2, "effects": [{"id": "102", "pct": 15}, {"id": "112", "pct": 10}], "conf": "high"},
+    {"hero": "Eric",     "gen": 3, "effects": [{"id": "202", "pct": 20}], "conf": "high"},
+    {"hero": "Petra",    "gen": 3, "effects": [{"id": "101", "pct": 43.75}], "short": "Chance skill: about 43.75% on average with 3 troop types (37.5% with 2). Only one Petra counts.", "wheel": true, "conf": "low", "unique": true, "petra": true,
+     "note": "Chance skill, rolled per attack: 50% chance of +50% for each troop type's attack. 3 troop types = 43.75% expected, 2 types = 37.5%. Does not stack: only one Petra per rally counts. Id 101 from the joiner calculator; trigger rate conflicts with that calculator (40%)."},
+    {"hero": "Margot",   "gen": 4, "effects": [{"id": "102", "pct": 25}], "conf": "high"},
+    {"hero": "Vivian",   "gen": 5, "effects": [{"id": "101", "pct": 20}], "short": "Card says 25%; about 20% in practice.", "conf": "medium", "exclude": "About 20% in practice, in the same group where Chenko and Yeonwoo give 25%.",
+     "note": "Card says 25%, but it needs a triggering attack; Sloth's testing puts it near 20%."},
+    {"hero": "Triton",   "gen": 6, "effects": [{"id": "112", "pct": 25}], "conf": "medium"},
+    {"hero": "Ava",      "gen": 7, "effects": [{"id": "301", "pct": 25}], "staple": true, "conf": "medium"},
+    {"hero": "Wee & Woo","gen": 7, "effects": [{"id": "102", "pct": 15}, {"id": "101", "pct": 10}], "wheel": true, "conf": "medium"},
+    {"hero": "Diego",    "gen": 8, "effects": [{"id": "112", "pct": 15}, {"id": "113", "pct": 10}], "wheel": true, "conf": "low", "short": "Gen 8 ids unpublished; matched by wording"},
+    {"hero": "Luna",     "gen": 8, "effects": [{"id": "102", "pct": 25}], "conf": "low", "short": "Gen 8 ids unpublished; matched by wording"},
+    {"hero": "Charles",  "gen": 7, "effects": [{"id": "203?", "pct": 20}], "short": "Enemy lethality down. Its group id is not published; treated as separate from Eric's enemy attack down.", "conf": "medium",
+     "note": "Enemy lethality down. The joiner calculator gives it Eric's id (202), but Sloth treats it as its own skill, and Sloth outranks that calculator here. Treated as a separate group until tested."},
+    {"hero": "Thrud",    "gen": 5, "exclude": "Only affects infantry and archers, so its value depends on formation."},
+    {"hero": "Alcar",    "gen": 4, "exclude": "Only affects infantry and archers, and is off for the first 5 turns."}
+  ],
+  "leaders": [
+    {"hero": "Amadeus", "class": "inf", "alwaysLead": true, "gen": 1, "widget": {"weapon": "Aegis of Fate", "skill": "Discernment", "when": "rally", "stat": "Attack", "pct": 15}, "skills": [
+      {"name": "Battle Ready", "text": "Lethality +25%", "id": "101", "pct": 25, "conf": "high"},
+      {"name": "Way of the Blade", "text": "Attack +25%", "id": "102", "pct": 25, "conf": "medium"},
+      {"name": "Unrighteous Strike", "text": "40% chance: damage dealt +50%", "id": "other"}]},
+    {"hero": "Helga", "class": "inf", "gen": 1, "widget": {"skill": "Zeal", "when": "rally", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Oath of Guardian", "text": "40% chance: damage taken -50%", "id": "other"},
+      {"name": "Echoes of Valhalla", "text": "Attack +25%", "id": "102", "pct": 25, "conf": "low"},
+      {"name": "Nature's Balance", "text": "Lethality +25%", "id": "101", "pct": 25, "conf": "low"}]},
+    {"hero": "Jabel", "class": "cav", "gen": 1, "widget": {"skill": "Divine Strength", "when": "defend", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Rally Flag", "text": "40% chance: damage taken -50%", "id": "other"},
+      {"name": "Hero's Domain", "text": "50% chance: extra damage", "id": "other"},
+      {"name": "Youthful Rage", "text": "Lethality +25%", "id": "101", "pct": 25, "conf": "low"}]},
+    {"hero": "Saul", "class": "arc", "gen": 1, "wheel": true, "widget": {"skill": "Defend to Attack", "when": "defend", "stat": "Attack", "pct": 15}, "skills": [
+      {"name": "Taskforce Training", "text": "Defense +10%, Health +15%", "effects": [{"id": "112", "pct": 10}, {"id": "113", "pct": 15}], "conf": "high"},
+      {"name": "Resourceful", "text": "Construction only", "id": "other"},
+      {"name": "Positional Battler", "text": "Lethality +25%", "id": "101", "pct": 25, "conf": "low"}]},
+    {"hero": "Zoe", "class": "inf", "gen": 2, "wheel": true, "widget": {"weapon": "The Unrighteous", "skill": "Dark Lady", "when": "defend", "stat": "Attack", "pct": 15}, "skills": [
+      {"name": "Sundering Wound", "text": "20% chance: 40% damage over 3 turns", "id": "other"},
+      {"name": "Charisma", "text": "Attack +25%", "id": "102", "pct": 25, "conf": "low"},
+      {"name": "Infinite Arsenal", "text": "50% chance: enemy damage taken +50%", "id": "other"}]},
+    {"hero": "Hilde", "class": "cav", "gen": 2, "widget": {"skill": "Fortitude", "when": "defend", "stat": "Health", "pct": 15}, "skills": [
+      {"name": "Noble Path", "text": "Attack +15%, Defense +10%", "effects": [{"id": "102", "pct": 15}, {"id": "112", "pct": 10}], "conf": "high"},
+      {"name": "Elixir of Strength", "text": "25% chance: 200% damage", "id": "other"},
+      {"name": "Trial by Fire", "text": "40% chance: damage taken -50%", "id": "other"}]},
+    {"hero": "Marlin", "class": "arc", "gen": 2, "widget": {"skill": "Admiral of the Line", "when": "rally", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Wild Card", "text": "40% chance: damage dealt +50%", "id": "other"},
+      {"name": "Rumhead", "text": "20% chance: enemy lethality -50% for 2 turns", "id": "other"}]},
+    {"hero": "Eric", "class": "inf", "gen": 3, "widget": {"weapon": "Anvil of Truth", "skill": "Vanguard", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [
+      {"name": "Holy Warrior", "text": "Enemy attack -20%", "id": "202", "pct": 20, "conf": "high"},
+      {"name": "Conviction", "text": "Damage taken -20%", "id": "111", "pct": 20, "conf": "low"},
+      {"name": "Exhortation", "text": "Health +25%", "id": "113", "pct": 25, "conf": "low"}]},
+    {"hero": "Petra", "class": "cav", "alwaysLead": true, "gen": 3, "wheel": true, "widget": {"weapon": "Fate's Writ", "skill": "Cosmic Eye", "when": "rally", "stat": "Attack", "pct": 15}, "skills": [
+      {"name": "Evil Eye", "text": "50% chance per attack: enemy damage taken +50%", "id": "101", "pct": 43.75, "conf": "low", "petra": true},
+      {"name": "The Favor", "text": "50% chance: attack +50%", "id": "other"},
+      {"name": "The Shield", "text": "40% chance: damage taken -50%", "id": "other"}]},
+    {"hero": "Jaeger", "class": "arc", "gen": 3, "widget": {"skill": "Hymn to Survival", "when": "defend", "stat": "Health", "pct": 15}, "skills": [
+      {"name": "The Tempest", "text": "20% chance: damage dealt +40% for 3 turns", "id": "other"},
+      {"name": "The Resistance", "text": "20% chance: enemy lethality -50% for 2 turns", "id": "other"},
+      {"name": "The Celebration", "text": "Health +25%", "id": "113", "pct": 25, "conf": "low"}]},
+    {"hero": "Alcar", "class": "inf", "gen": 4, "widget": {"weapon": "Praetorian Guard", "skill": "Vow of Honor", "when": "defend", "stat": "Health", "pct": 15}, "skills": [
+      {"name": "Rescuing Hands", "text": "Infantry and archers: damage taken -70%, 2 of every 5 turns", "id": "other"},
+      {"name": "Praetorian Will", "text": "Infantry damage +100%, others +10%", "id": "other"},
+      {"name": "Carpe Diem", "text": "Infantry damage +60% per attack", "id": "other"}]},
+    {"hero": "Margot", "class": "cav", "gen": 4, "widget": {"skill": "Pugilist", "when": "defend", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Warbringer", "text": "Attack +25%", "id": "102", "pct": 25, "conf": "high"},
+      {"name": "Subterfuge", "text": "20% chance to dodge", "id": "other"},
+      {"name": "Sleight Hand", "text": "Cavalry: chance of an extra attack", "id": "other"}]},
+    {"hero": "Rosa", "class": "arc", "gen": 4, "wheel": true, "widget": {"skill": "Perihelion", "when": "rally", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Chaos Gambit", "text": "40% chance: damage dealt +50%", "id": "other"},
+      {"name": "Rose of War", "text": "Enemy damage dealt -20%", "id": "201", "pct": 20, "conf": "medium"},
+      {"name": "Golden Rhythm", "text": "Archers: attack +30%", "id": "other"}]},
+    {"hero": "Long Fei", "class": "inf", "gen": 5, "wheel": true, "widget": {"weapon": "Immortal's Flask", "skill": "Strategic Strike", "when": "defend", "stat": "Attack", "pct": 15}, "skills": [
+      {"name": "Mighty Paragon", "text": "40% chance: damage taken -50%", "id": "other"},
+      {"name": "Celestial Sustenance", "text": "Defense +25%", "id": "112", "pct": 25, "conf": "low"},
+      {"name": "Art of War", "text": "25% chance: 200% damage", "id": "other"}]},
+    {"hero": "Thrud", "class": "cav", "gen": 5, "widget": {"skill": "Wolf-Kissed", "when": "rally", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Battle Hunger", "text": "Infantry and archers: damage taken -15%, damage +15%", "id": "other"},
+      {"name": "Reckless Charge", "text": "20% chance: 100% extra damage", "id": "other"},
+      {"name": "Ancestral Guidance", "text": "After 4 cavalry attacks: damage +25%, taken -25%", "id": "other"}]},
+    {"hero": "Vivian", "class": "arc", "gen": 5, "widget": {"skill": "Money Driven", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [
+      {"name": "Crouching Tiger", "text": "Enemy damage taken +25%", "id": "101", "pct": 20, "conf": "medium"},
+      {"name": "Focus Fire", "text": "Every 4 attacks: extra damage", "id": "other"},
+      {"name": "Trap of Greed", "text": "Every 4 attacks: 60% extra damage", "id": "other"}]},
+    {"hero": "Triton", "class": "inf", "gen": 6, "widget": {"skill": "Whale Call", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [
+      {"name": "Command of Power", "text": "Defense +25%", "id": "112", "pct": 25, "conf": "medium"},
+      {"name": "Oath of Power", "text": "Health +20% infantry, +30% cavalry and archers", "id": "113", "pct": 25, "conf": "low", "note": "Stored as 25%, a round figure between the 20% and 30% troop values."},
+      {"name": "Warfare of Power", "text": "Skill damage +30%", "id": "other"}]},
+    {"hero": "Sophia", "class": "cav", "gen": 6, "wheel": true, "widget": {"skill": "Queen of Night", "when": "defend", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Arcane Pact", "text": "40% chance: damage taken -50%", "id": "other"},
+      {"name": "Terror - Deathblow", "text": "Cavalry damage vs Terrified targets", "id": "other"},
+      {"name": "Terror - Annihilation", "text": "Damage +75% vs Terrified targets", "id": "other"}]},
+    {"hero": "Yang", "class": "arc", "gen": 6, "widget": {"skill": "Offensive Defense", "when": "rally", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Avalanche", "text": "Extra strike every 4 turns", "id": "other"},
+      {"name": "Ice Zone", "text": "Archers: 40% chance of extra damage", "id": "other"},
+      {"name": "Ambush", "text": "40% chance: damage dealt +50%", "id": "other"}]},
+    {"hero": "Charles", "class": "inf", "gen": 7, "widget": {"weapon": "Justice Fist", "skill": "Shock and Awe", "when": "defend", "stat": "Health", "pct": 15}, "skills": [
+      {"name": "Intimidation", "text": "Enemy lethality -20%", "id": "203?", "pct": 20, "conf": "low"},
+      {"name": "Iron Bodies", "text": "Damage taken -20%", "id": "111", "pct": 20, "conf": "low"},
+      {"name": "Great Justice", "text": "Health +25%", "id": "113", "pct": 25, "conf": "low"}]},
+    {"hero": "Ava", "class": "cav", "alwaysLead": true, "gen": 7, "widget": {"skill": "Color Storm", "when": "rally", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Dissolution", "text": "Enemy defense -25%", "id": "301", "pct": 25, "conf": "medium"},
+      {"name": "Chiaroscuro", "text": "Enemy damage taken +50%, 2 of every 4 turns", "id": "other"},
+      {"name": "Light and Cold", "text": "Lethality +25%", "id": "101", "pct": 25, "conf": "low"}]},
+    {"hero": "Wee & Woo", "class": "arc", "gen": 7, "wheel": true, "widget": {"skill": "Landmines", "when": "defend", "stat": "Attack", "pct": 15}, "skills": [
+      {"name": "Artillerymen", "text": "Attack +15%, Lethality +10%", "effects": [{"id": "102", "pct": 15}, {"id": "101", "pct": 10}], "conf": "medium"},
+      {"name": "Chain Shelling", "text": "Damage vs archers +30%, vs infantry +25%", "id": "other"},
+      {"name": "Boom Boom", "text": "50% chance: 50% extra damage", "id": "other"}]},
+    {"hero": "Diego", "class": "inf", "gen": 8, "wheel": true, "widget": {"weapon": "Meteor Blade", "skill": "Extraordinary", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [
+      {"name": "Defensive Guidance", "text": "Defense +15%, Health +10%", "effects": [{"id": "112", "pct": 15}, {"id": "113", "pct": 10}], "conf": "low"},
+      {"name": "Piercing Aura", "text": "50% chance: 50% extra damage", "id": "other"},
+      {"name": "Cold Frost", "text": "Lethality +25%", "id": "101", "pct": 25, "conf": "low"}]},
+    {"hero": "Liz", "class": "cav", "gen": 8, "widget": {"skill": "Power Mix", "when": "defend", "stat": "Lethality", "pct": 15}, "skills": [
+      {"name": "Alloyed Agent", "text": "50% chance each turn: lethality +50%", "id": "other"},
+      {"name": "Vitalis Potion", "text": "Health +25%", "id": "113", "pct": 25, "conf": "low"},
+      {"name": "Horsemaster", "text": "Cavalry: 50% chance of 150% extra damage", "id": "other"}]},
+    {"hero": "Luna", "class": "arc", "gen": 8, "widget": {"skill": "Moonlit Splendor", "when": "rally", "stat": "Attack", "pct": 15}, "skills": [
+      {"name": "Driving Light", "text": "Attack +25%", "id": "102", "pct": 25, "conf": "low"},
+      {"name": "Woodland Vengeance", "text": "Enemy attack -50%, 1 of every 2 turns", "id": "other"},
+      {"name": "Arrowflash", "text": "Archers: +50% damage per attack", "id": "other"}]}
+  ]
+}

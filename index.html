@@ -1,0 +1,580 @@
+<meta charset="utf-8">
+<title>Kingshot Joiner Picker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: one narrow column of stacked "war table" panels; controls first, answer second, explainers folded below. */
+:root {
+  --bg: #eef1f5; --surface: #ffffff; --ink: #1b2430; --muted: #5a6574; --line: #d5dbe3;
+  --accent: #2d5b88; --accent-soft: #e2ebf5; --brass: #9a6b1f; --brass-soft: #f6ecd9;
+  --good: #2f7a4a; --warn: #a3561a;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11171f; --surface: #19212c; --ink: #e5eaf1; --muted: #9ba6b4; --line: #2b3644;
+  --accent: #82abd8; --accent-soft: #1f3044; --brass: #d9a94f; --brass-soft: #33291a;
+  --good: #6cc08b; --warn: #e3995a; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #11171f; --surface: #19212c; --ink: #e5eaf1; --muted: #9ba6b4; --line: #2b3644;
+  --accent: #82abd8; --accent-soft: #1f3044; --brass: #d9a94f; --brass-soft: #33291a;
+  --good: #6cc08b; --warn: #e3995a; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 18px; }
+h1, h2 { font-family: var(--display); letter-spacing: .01em; text-wrap: balance; margin: 0; }
+h1 { font-size: 2.1rem; line-height: 1.1; }
+h2 { font-size: 1.35rem; }
+.lede { margin: 6px 0 0; color: var(--muted); max-width: 62ch; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 14px; min-width: 0; }
+.label { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.controls { display: grid; gap: 14px; }
+.leaders { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 520px) { .leaders { grid-template-columns: 1fr; } }
+.check { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 600; cursor: pointer; }
+.check input { width: 20px; height: 20px; accent-color: var(--accent); }
+.pick { display: grid; gap: 4px; min-width: 0; }
+select { font: inherit; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; min-height: 44px; }
+.toggles { display: flex; flex-wrap: wrap; gap: 18px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { font: inherit; font-weight: 600; border: 0; background: var(--bg); color: var(--ink); padding: 9px 16px; min-height: 44px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+button:focus-visible, select:focus-visible, summary:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
+.crowdsum { display: grid; gap: 6px; }
+.crowdsum p { margin: 0; }
+.crowdsum ul { margin: 0; padding-left: 22px; display: grid; gap: 2px; }
+.crowdsum b { font-family: var(--display); font-size: 1.05rem; letter-spacing: .02em; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; background: var(--accent); vertical-align: middle; }
+.sw.def { background: var(--brass); }
+td .sw { margin-right: 6px; }
+.empty { color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; gap: 6px; align-items: baseline; padding: 6px 10px; border-radius: 999px; background: var(--accent-soft); font-size: .92rem; }
+.chip b { font-variant-numeric: tabular-nums; }
+.chip.def { background: var(--brass-soft); }
+.chip .id { color: var(--muted); font-size: .8rem; }
+.hint { color: var(--muted); font-size: .92rem; margin: 0; }
+.cantgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.cantgrid .chip { flex-direction: column; align-items: center; gap: 0; border-radius: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cantgrid .chip .sub { font-size: .75rem; color: var(--muted); }
+#cant { display: grid; gap: 8px; }
+button.chip { font: inherit; font-size: .92rem; border: 1px solid var(--line); color: var(--ink); cursor: pointer; min-height: 36px; }
+button.chip[aria-pressed="false"] { background: var(--bg); color: var(--muted); text-decoration: line-through; }
+.answer { border: 2px solid var(--accent); }
+.big { font-family: var(--display); font-size: 2.6rem; line-height: 1; font-variant-numeric: tabular-nums; color: var(--accent); }
+.rows { display: grid; gap: 0; }
+.row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.row:first-child { border-top: 0; }
+.row .name { font-weight: 700; }
+.row .why { grid-column: 1 / -1; color: var(--muted); font-size: .92rem; }
+.val { font-variant-numeric: tabular-nums; font-weight: 700; }
+.flag { color: var(--warn); font-weight: 700; }
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); font-size: .95rem; }
+td.win { background: var(--accent-soft); font-weight: 700; }
+tfoot td { border-top: 2px solid var(--line); border-bottom: 0; }
+th { font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+td.num, th.num { text-align: right; }
+.scroll { overflow-x: auto; }
+.bar { height: 8px; border-radius: 4px; background: var(--accent); min-width: 2px; }
+.bar.def { background: var(--brass); }
+.alt { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; font-size: .95rem; }
+.alt .val { text-align: right; }
+details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+details > summary { cursor: pointer; padding: 16px 18px; font-family: var(--display); font-size: 1.25rem; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::after { content: "+"; color: var(--accent); }
+details[open] > summary::after { content: "−"; }
+details .inner { padding: 0 18px 18px; display: grid; gap: 12px; }
+details p, details li { max-width: 90ch; }
+pre { white-space: pre; overflow-x: auto; }
+
+pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: .9rem; line-height: 1.45; margin: 0; }
+.notes { font-size: .9rem; color: var(--muted); display: grid; gap: 6px; }
+.notes p { margin: 0; }
+a { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .bar { transition: width .25s ease; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Kingshot Joiner Picker</h1>
+    <p class="lede">Pick your three lead heroes (rally or garrison). The page shows the four joiners that add the most, or an easier-to-fill lineup within 0.5%.</p>
+    <p class="lede"><b>Same lead heroes, same best joiners.</b> Your stats don't change the answer. Only the battle type (PvP or Bear), the troop types sent, and the joiners you have do.</p>
+  </header>
+
+  <details>
+    <summary>The 3 components of rally power</summary>
+    <div class="inner">
+<pre>Rally power = Stats × Buffs × Skills</pre>
+      <p><b>1. Stats.</b> Your battle report % from gear, research, charms and heroes. They work in two pairs: (<b>Attack</b> × <b>Lethality</b>) and (<b>Defense</b> × <b>Health</b>). Inside each pair a point helps most on the lower stat, so <b>raise the lower stat of each pair first</b>. Joiners can't fix this.</p>
+      <p><b>2. Buffs (other multipliers).</b> Widgets, pets, city buffs and titles (King, Marshal and so on). Same-stat buffs add up, then multiply your stats. Enemy-down buffs shrink their stat. In a rally, only the leader's widgets count.</p>
+      <p><b>3. Skills.</b> The lead heroes' skills plus each joiner's first skill. Same-stat bonuses add up in one bucket, and the buckets multiply. This page only covers this part.</p>
+<pre>Kills scale with:  your stats ÷ enemy stats  ×  skill boost
+                    └ fixed by you ────────┘     └ joiners only change this
+
+A joiner's worth = skill boost with them ÷ skill boost without them
+                   (your stats cancel out)
+
+PvP counts both sides:
+  Damage you deal = (Attack × Lethality) ÷ (their Defense × Health) × your offense buckets
+  Damage you take = (their Attack × Lethality) ÷ (Defense × Health) ÷ your defense buckets</pre>
+      <p>So two players with the same three lead heroes want the same joiners, whatever their stats. Each joiner brings its own multiplier, and crowding decides how much it really adds.</p>
+    </div>
+  </details>
+
+  <section class="panel controls" aria-label="Rally setup">
+    <div>
+      <div class="label" id="lead-label">Lead team (rally or garrison)</div>
+      <div class="leaders" role="group" aria-labelledby="lead-label">
+        <label class="pick"><span class="hint">Infantry</span><select id="lead1"></select></label>
+        <label class="pick"><span class="hint">Cavalry</span><select id="lead2"></select></label>
+        <label class="pick"><span class="hint">Archer</span><select id="lead3"></select></label>
+      </div>
+    </div>
+    <div class="toggles">
+      <div>
+        <div class="label">Battle</div>
+        <div class="seg" id="mode">
+          <button type="button" data-v="pvp" aria-pressed="true">PvP</button>
+          <button type="button" data-v="bear" aria-pressed="false">Bear (PvE)</button>
+        </div>
+      </div>
+      <div>
+        <div class="label">Troop types sent</div>
+        <div class="seg" id="types">
+          <button type="button" data-v="3" aria-pressed="true">3</button>
+          <button type="button" data-v="2" aria-pressed="false">2</button>
+        </div>
+        <p class="hint">Only changes Petra: she gets one 50% check per troop type.</p>
+      </div>
+      <div>
+        <label class="pick" style="max-width:220px"><span class="label">Newest generation on your server</span><select id="likely-gen"></select></label>
+        <p class="hint">Joiners newer than this are left out everywhere.</p>
+      </div>
+    </div>
+    <p class="hint" id="mode-hint"></p>
+  </section>
+
+  <details id="crowded-sec">
+    <summary id="fill-h">Where your lead team is crowded</summary>
+    <div class="inner">
+    <div class="crowdsum" id="crowd-sum"></div>
+    <details id="group-totals">
+      <summary>How full each group gets: lead team alone, then with best 4</summary>
+      <div class="inner">
+    <p class="hint">How much each skill group is boosted: first by your three lead heroes alone, then after the best four joiners are added. Only groups that end up with something in them are listed. The bottom row multiplies every group together: your combined boost from the skill groups joiners can share. Lead chance skills other than Petra's, and widgets, are not counted.</p>
+        <div class="scroll"><table id="fill"><thead><tr><th>Skill group</th><th>Lead team skills in it</th><th class="num">Lead team total</th><th class="num">With best 4 joiners</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
+      </div>
+    </details>
+    <details id="all-skills">
+      <summary>All lead team skills and widgets</summary>
+      <div class="inner">
+        <p class="hint">Every expedition skill the three lead heroes bring, plus each hero's widget. Skills marked "not counted" still help the rally (except construction skills), but they are chance-based, limited to some troop types, or in an unpublished group, so they don't change which joiners are best. Widgets are not counted in the joiner math yet; a rally widget does nothing when you defend, a defender widget does nothing in your own rally, and solo marches get no widget bonus at all.</p>
+        <div class="scroll"><table id="lead-skills"><thead><tr><th>Hero</th><th>Skill</th><th>What it does</th><th>Skill group</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </details>
+    <p class="hint"><span class="sw off"></span> your damage dealt &nbsp; <span class="sw def"></span> damage you take</p>
+    </div>
+  </details>
+
+  <details id="pool-sec">
+    <summary id="cant-h">Shape your joiner pool</summary>
+    <div class="inner">
+    <p class="hint">Which heroes can join your rallies? Every hero starts on. Within each group, heroes rated higher in Likely wanted come first. Tap one to turn it off (for example Petra, or a hero nobody in your alliance has built). Everything below recounts with only the heroes left on.</p>
+    <div id="cant"></div>
+    <p class="hint">* Take only one Petra. A second Petra only adds three more 50% checks: her chance to trigger goes from 87.5% to 98.4%, about +5.5 points on average, so the slot is better spent elsewhere.</p>
+    <p class="hint">Best guess: the game doesn't publish skill codes. The skill groups here are our best inference from each skill's wording and other released information.</p>
+    </div>
+  </details>
+
+
+  <section class="panel answer" aria-labelledby="best-h">
+    <h2 id="best-h">Best four joiners</h2>
+    <div><span class="big" id="best-x"></span> <span class="hint">on top of the lead team's own skills</span></div>
+    <div class="rows" id="best-rows"></div>
+    <p class="hint">Each pick is counted on top of the picks above it. "Overlaps" names who already has a skill in that group.</p>
+    <div>
+      <div class="label">Close alternatives</div>
+      <div class="alt" id="alts"></div>
+      <p class="hint">Good enough beats perfect: when another lineup is at most 0.5% higher, the best four shows the one most alliances can fill (in order: fewer heroes from the two newest generations, not counting staples like Ava or Hero Roulette heroes like Diego; then fewer different heroes; then the higher value; exact ties go to heroes rated higher in Likely wanted, then to older heroes) and lists the higher one below as "harder to fill". Use whoever is easiest to get into the rally.</p>
+    </div>
+  </section>
+
+  <details id="likely-sec">
+    <summary>Likely wanted in PvP</summary>
+    <div class="inner">
+      <p class="hint">A general list for saved joiner formations. It uses the newest generation on your server (picked at the top). It checks every PvP lead team built from the three newest generations up to that one, plus Amadeus, Petra and Ava (common leads, once released on your server), and counts how often each ability is in the best four this page actually shows, using the same tie-breakers. Crowding is included: each lead team gets its own best four. Heroes you turn off in your joiner pool are left out here too. Always PvP with 3 troop types. High = in the best four for 50% or more of these lead teams, Medium = 20–49%, Low = under 20%, Never = not picked for any of them.</p>
+      <div class="scroll"><table id="likely"><thead><tr><th>What they bring</th><th>Joiners with it</th><th class="num">Likely wanted</th></tr></thead><tbody></tbody></table></div>
+      <p class="hint" id="likely-teams"></p>
+    </div>
+  </details>
+
+  <details id="single-sec">
+    <summary id="single-h">First pick only: every joiner ability</summary>
+    <div class="inner">
+    <p class="hint">What each joiner adds as the first and only joiner. These numbers change after each pick, because every pick crowds its group. <span id="crowd-example"></span> For backups, turn off the heroes you can't get in Shape your joiner pool.</p>
+    <div class="scroll"><table id="single"><thead><tr><th>What they bring</th><th>Joiners with it</th><th class="num">Really adds</th><th style="width:22%"></th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </details>
+
+
+  <details id="crowd">
+    <summary>Why crowding a group costs you</summary>
+    <div class="inner">
+      <div class="label">What each copy adds, copies 1 to 7</div>
+      <p>Not every copy of a skill counts the same. On paper (its nominal value), every 25% copy adds +25%. Its real gain is relative: it is measured against the group total before it, so each new copy is a smaller step up from a bigger total.</p>
+      <div class="scroll"><table class="rule">
+        <thead>
+          <tr><th rowspan="2">Copy in the group</th><th class="num" colspan="2">25% skill (Chenko, Gordon…)</th><th class="num" colspan="2">20% skill (Fahd, Eric…)</th></tr>
+          <tr><th class="num">Group total</th><th class="num">Real gain</th><th class="num">Group total</th><th class="num">Real gain</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0 (empty)</td><td class="num">0%</td><td class="num">—</td><td class="num">0%</td><td class="num">—</td></tr>
+          <tr><td>1</td><td class="num">25%</td><td class="num win">+25.0%</td><td class="num">20%</td><td class="num win">+20.0%</td></tr>
+          <tr><td>2</td><td class="num">50%</td><td class="num">+20.0%</td><td class="num">40%</td><td class="num">+16.7%</td></tr>
+          <tr><td>3</td><td class="num">75%</td><td class="num">+16.7%</td><td class="num">60%</td><td class="num">+14.3%</td></tr>
+          <tr><td>4</td><td class="num">100%</td><td class="num">+14.3%</td><td class="num">80%</td><td class="num">+12.5%</td></tr>
+          <tr><td>5</td><td class="num">125%</td><td class="num">+12.5%</td><td class="num">100%</td><td class="num">+11.1%</td></tr>
+          <tr><td>6</td><td class="num">150%</td><td class="num">+11.1%</td><td class="num">120%</td><td class="num">+10.0%</td></tr>
+          <tr><td>7</td><td class="num">175%</td><td class="num">+10.0%</td><td class="num">140%</td><td class="num">+9.1%</td></tr>
+        </tbody>
+      </table></div>
+      <p>Up to 3 copies can come from the lead team, then up to 4 from joiners, so 7 is the most a group can hold. Copy 1 (highlighted) is a skill going into an empty group. A fresh 20% (+20%) ties a 25% that would be copy 2, and beats any 25% that would be copy 3 or later. Within one group, every 25% copy still adds the same 25 points: with 100 damage, copy 1 takes it to 125 and copy 2 to 150. The percentage shrinks because each copy is measured against a bigger total. The same copy in a different group would multiply instead (125 × 1.25 = 156.25), so crowding costs about 6 damage per 100 here, and more with each copy.</p>
+      <div class="label">Your lead team: pick a group</div>
+      <p>Bonuses to the same stat (attack, lethality, defense, health, and so on) add together inside one bucket. The buckets then multiply together for the final result. So each extra copy in a bucket is a smaller step up, and a joiner only adds its full card value when its bucket is empty.</p>
+      <label class="pick" style="max-width:420px"><span class="label">Skill group</span><select id="crowd-id"></select></label>
+      <div class="scroll"><table id="crowd-t"><thead><tr><th>Row</th><th>In the group</th><th class="num">Group total</th><th class="num">This step adds</th><th class="num">Joiners so far</th></tr></thead><tbody></tbody></table></div>
+      <p class="hint">Row 0 is the lead team (rally or garrison): every skill its three heroes have in this group. Rows 1–4 are joiners added one at a time; only 4 joiner skills count. Effect is how much that row really raises the result. For debuffs, "enemy left" shows the same thing from their side. A −25% card (Ava) leaves them 80%, the same as +25% for you, not 75%. A −20% card (Fahd, Eric) leaves 83%, the same as +20%.</p>
+      <p id="crowd-say"></p>
+    </div>
+  </details>
+
+
+  <details>
+    <summary>Does a weaker player gain more from debuffs?</summary>
+    <div class="inner">
+      <p>No. Kills come from your stats divided by theirs, so a cut to their side and a boost to yours move the result by the same amount.</p>
+<pre>You 1,500% vs them 4,000%
+
+Start             1,500 ÷ 4,000 = 0.375
+You ×1.25         1,875 ÷ 4,000 = 0.469
+Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
+      <p>So the size of anyone's stats never decides between a buff and a debuff. Two things do: the size of the skill (Fahd and Eric are 20%, so they divide by 1.2), and how full its group already is.</p>
+      <p><b>Takeaway: always pick the joiner with the largest relative increase</b>, whether it buffs you or debuffs them.</p>
+    </div>
+  </details>
+
+  <section class="notes" aria-label="Notes and sources">
+    <p><b>Left out on purpose:</b> Vivian, because her lethality skill works out near 20% while Chenko and Yeonwoo give 25% in the same group. Thrud and Alcar, because their skills only reach some troop types, so their value depends on formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
+    <p><b>Petra is included</b> because a rally always sends at least two troop types. Her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). Only one Petra is counted, and she is dropped if the lead team already has her.</p>
+    <p><b>Chance-based skills:</b> outside of Petra, chance-based skills are traditionally not wanted for joiners. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group.</p>
+    <p><b>Charles</b> (enemy lethality down) is assumed to be his own group, separate from Eric's enemy attack down, until a battle test shows otherwise.</p>
+    <p><b>Assumed:</b> every joiner's first skill is level 5 (the hero is 4-star or better), so it brings the full % on its card.</p>
+    <p><b>Assumed:</b> in PvP, your damage dealt and damage taken count the same (both sides attack every round). Bear is one-sided, so damage output is what matters.</p>
+    <p><b>Sources, most trusted first:</b> Frakinator (frakinator.streamlit.app), Sloth / KingshotOptimizer, Daryl / kingshotguides.com; then kingshotjoinercalculator.netlify.app, kingshotcalculator.com and kingshotdata.com for skill wording. Gen 9 heroes are not in yet.</p>
+    <p id="updated"></p>
+  </section>
+</div>
+
+<script src="calc.js"></script>
+<script>
+(function () {
+  'use strict';
+  var C = window.JoinerCalc, data;
+  var state = { leads: ['Diego', 'Ava', 'Luna'], mode: 'pvp', troopTypes: 3, crowdId: '' };
+  var CLASSES = ['inf', 'cav', 'arc'];
+  var EXAMPLE = { '101': ['Chenko', 25], '102': ['Amane', 25], '301': ['Ava', 25], '111': ['Howard', 20],
+    '112': ['Triton', 25], '113': ['Gordon', 25], '201': ['Fahd', 20], '202': ['Eric', 20], '203?': ['Charles', 20] };
+  try { var saved = JSON.parse(localStorage.getItem('jp-state') || 'null'); if (saved && saved.leads) state = Object.assign(state, saved); } catch (e) {}
+  if (state.noPetra) { state.without = (state.without || []).concat(['Petra']); delete state.noPetra; }
+  function save() { try { localStorage.setItem('jp-state', JSON.stringify(state)); } catch (e) {} }
+  var DEFAULT_GEN = 7;
+  function $(id) { return document.getElementById(id); }
+  function x(v) { return '×' + v.toFixed(3); }
+  function pctAdded(v) { return '+' + ((v - 1) * 100).toFixed(1) + '%'; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var likedCache = {};
+  var likelySaved = null; // data/likely.json: precomputed for every gen: full pool, Petra off, Ava off, both off
+  // Saved lookup when the pool matches one, else computed live (about a second) and kept.
+  function likely(live) {
+    var g = state.likelyGen || DEFAULT_GEN, w = (state.without || []).slice().sort(), k = g + '|' + w.join(',');
+    if (likedCache[k]) return likedCache[k];
+    var v = { '': 'all', 'Petra': 'noPetra', 'Ava': 'noAva', 'Ava,Petra': 'noAvaPetra' }[w.join()];
+    if (likelySaved && likelySaved.gens[g] && v) return (likedCache[k] = C.likelyRows(data, g, w, likelySaved.gens[g][v].teams, likelySaved.gens[g][v].byHero));
+    if (!live) return null;
+    return (likedCache[k] = C.likelyWanted(data, g, w));
+  }
+  // Exact-tie scores come from the saved lookup only, so the best four never shifts when Likely wanted is opened.
+  function tieScores() {
+    var g = state.likelyGen || DEFAULT_GEN, w = (state.without || []).slice().sort();
+    var v = { '': 'all', 'Petra': 'noPetra', 'Ava': 'noAva', 'Ava,Petra': 'noAvaPetra' }[w.join()] || 'all';
+    return likelySaved && likelySaved.gens[g] ? likelySaved.gens[g][v].byHero : {};
+  }
+  function opts() { return { mode: state.mode, troopTypes: state.troopTypes, without: state.without || [], maxGen: state.likelyGen || DEFAULT_GEN, liked: tieScores() }; }
+  function groupName(id) { return data.groups[id].label; }
+  function side(id) { return data.groups[id].side; }
+
+  function seg(id, key, cast) {
+    var el = $(id);
+    el.addEventListener('click', function (ev) {
+      var b = ev.target.closest('button'); if (!b) return;
+      state[key] = cast(b.dataset.v); save(); render();
+    });
+  }
+  function syncSeg(id, val) {
+    Array.prototype.forEach.call($(id).querySelectorAll('button'), function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.v === String(val)));
+    });
+  }
+
+  function render() {
+    var o = opts();
+    syncSeg('mode', state.mode); syncSeg('types', state.troopTypes);
+    $('mode-hint').textContent = state.mode === 'bear'
+      ? 'Bear is one-sided, so damage output is what matters.'
+      : 'PvP: both sides attack every round, so damage dealt and damage taken count the same.';
+
+    var g = C.leaderGroups(data, state.leads, o);
+    var nextPct = {};
+    Object.keys(EXAMPLE).forEach(function (id) { nextPct[id] = EXAMPLE[id][1]; });
+    var best = C.bestLineups(data, state.leads, o, 4, 60);
+    var top = best[0];
+    if (!top) { state.without = []; save(); alert('No joiners were left on, so the joiner pool was reset to all on.'); return render(); }
+    var withBest = C.teamGroups(data, state.leads, top.team, o);
+    var tot = function (pct) { pct = pct || 0; return '+' + (pct % 1 ? pct.toFixed(1) : pct) + '%<br><span class="hint">×' + (1 + pct / 100).toFixed(2) + '</span>'; };
+    var leadAll = C.product(g), bestAll = C.product(withBest);
+    $('fill').querySelector('tfoot').innerHTML = '<tr><td colspan="2"><b>All groups combined</b> <span class="hint">(groups multiply)</span></td>' +
+      '<td class="num"><b>×' + leadAll.toFixed(2) + '</b></td><td class="num"><b>×' + bestAll.toFixed(2) + '</b></td></tr>';
+    $('lead-skills').querySelector('tbody').innerHTML = state.leads.map(function (name) {
+      var l = data.leaders.find(function (h) { return h.hero === name; });
+      return l.skills.map(function (sk, k) {
+        var ids = sk.effects ? sk.effects.map(function (e) { return e.id; }) : [sk.id];
+        var grp = ids[0] === 'other' ? '<span class="empty">' + (/construction/i.test(sk.text) ? 'Not a battle skill' : /chance|every|turn/i.test(sk.text) ? 'Chance or turn-based, not counted' : /^(infantry|cavalry|archers)|vs (archers|infantry|cavalry)/i.test(sk.text) ? 'Some troop types only, not counted' : 'Group unknown, not counted') + '</span>' : ids.map(function (id) {
+          var off = o.mode === 'bear' && side(id) !== 'off';
+          return '<span class="sw ' + side(id) + '"></span>' + esc(groupName(id)) + 
+            (off ? ' <span class="hint">(no effect in Bear)</span>' : '');
+        }).join('<br>');
+        return '<tr><td>' + (k === 0 ? '<b>' + esc(name) + '</b>' : '') + '</td><td>' + esc(sk.name) + '</td><td>' + esc(sk.text) + '</td><td>' + grp + '</td></tr>';
+      }).join('') + (l.widget ? '<tr><td></td><td>Widget: ' + esc(l.widget.skill) + '</td><td>' +
+        (l.widget.when === 'rally' ? 'Rally squad ' : 'Defender squad ') + esc(l.widget.stat) + ' +' + l.widget.pct + '% (max level)</td><td>' +
+        (l.widget.when === 'rally' ? 'Only when this hero leads a rally' : 'Only when defending or garrisoning') + '</td></tr>' : '');
+    }).join('');
+
+    var summ = C.groupSummary(data, state.leads, o, nextPct);
+    var crowded = summ.filter(function (r) { return r.from.length; }).sort(function (a, b) { return b.have - a.have; });
+    var open = summ.filter(function (r) { return !r.from.length; });
+    $('crowd-sum').innerHTML =
+      '<p><b>Crowded</b> (joiners here add less):</p>' + (crowded.length ? '<ul>' + crowded.map(function (r) {
+        return '<li>' + esc(groupName(r.id)) + ': ' + r.from.length + ' skill' + (r.from.length > 1 ? 's' : '') + ' (' + (r.have % 1 ? r.have.toFixed(1) : r.have) + '%) from ' +
+          r.from.map(function (f) { return esc(f.hero); }).join(', ') + '</li>';
+      }).join('') + '</ul>' : '<p>nothing</p>') +
+      '<p><b>Open</b> (joiners here add their full %): ' + (open.length ? open.map(function (r) { return esc(groupName(r.id)); }).join(' \u00b7 ') : 'nothing') + '</p>';
+    $('fill').querySelector('tbody').innerHTML = C.groupSummary(data, state.leads, o, nextPct)
+      .filter(function (r) { return r.have || withBest[r.id]; })
+      .sort(function (a, b) { return b.from.length - a.from.length; })
+      .map(function (r) {
+        var who = r.from.length
+          ? r.from.map(function (f) { return esc(f.hero) + ' ' + f.pct + '%'; }).join('<br>')
+          : '<span class="empty">none</span>';
+        return '<tr><td><span class="sw ' + side(r.id) + '"></span>' + esc(groupName(r.id)) + '</td><td>' + who + '</td>' +
+          '<td class="num">' + tot(r.have) + '</td><td class="num">' + tot(withBest[r.id]) + '</td></tr>';
+      }).join('');
+
+    $('best-x').textContent = x(top.value);
+    var picked = [];
+    $('best-rows').innerHTML = C.breakdown(data, state.leads, top.team, o).map(function (r) {
+      var fmt = function (v) { return v.toFixed(v % 1 ? 1 : 0); };
+      var why = r.ids.length ? r.ids.map(function (e) {
+        return esc(groupName(e.id)) +  ': ' +
+          (e.overlaps.length ? 'overlaps ' + e.overlaps.map(esc).join(', ') : 'open group') + ', ' +
+          fmt(e.before) + '% → ' + fmt(e.before + e.pct) + '%';
+      }).join('<br>') : 'No group counts in this battle type';
+      if (r.joiner.short) why += '<br>' + esc(r.joiner.short);
+      // Who else could fill this slot, given the picks above it.
+      var same = C.rankNext(data, state.leads, picked, o).filter(function (c) {
+        return c.joiner.hero !== r.joiner.hero && Math.abs(c.value - r.value) < 0.0005;
+      }).map(function (c) { return c.joiner.hero; });
+      picked.push(r.joiner);
+      if (same.length) why += '<br><span class="hint">Same value instead: ' + same.map(esc).join(', ') + '</span>';
+      return '<div class="row"><span class="name">' + (picked.length) + '. ' + esc(r.joiner.hero) + '</span><span class="val">' + pctAdded(r.value) +
+        '</span><span class="why">' + why + '</span></div>';
+    }).join('');
+    var all = C.pool(data, state.leads, { mode: o.mode, troopTypes: o.troopTypes, maxGen: o.maxGen });
+    // Chips grouped by shape: hybrids, straight 25%, 20%, then chance. Damage-side heroes first in each.
+    var SHORT = { '101': 'Leth', '102': 'Atk', '111': 'Dmg taken', '112': 'Def', '113': 'HP', '201': 'Enemy dmg', '202': 'Enemy atk', '203?': 'Enemy leth', '301': 'Enemy def' };
+    var KINDS = [
+      ['Hybrids (two stats)', function (j) { return !j.petra && j.effects.length > 1; }],
+      ['Straight 25%', function (j) { return !j.petra && j.effects.length === 1 && j.effects[0].pct === 25; }],
+      ['20% skills', function (j) { return !j.petra && j.effects.length === 1 && j.effects[0].pct !== 25; }],
+      ['Chance', function (j) { return j.petra; }]];
+    // Chip order uses the full-pool scores so chips stay put when heroes are turned on or off.
+    var g0 = state.likelyGen || DEFAULT_GEN;
+    var liked = likelySaved && likelySaved.gens[g0] ? likelySaved.gens[g0].all.byHero : {};
+    var rank = function (j) { return -(liked[j.hero] || 0) * 10 + (side(j.effects[0].id) === 'off' ? 0 : 1); };
+    var off = o.without.length;
+    $('cant-h').textContent = 'Shape your joiner pool' + (off ? ' (' + off + ' off: ' + o.without.join(', ') + ')' : ' (all on)');
+    $('cant').innerHTML = KINDS.map(function (k) {
+      var list = all.filter(k[1]).map(function (j, i) { return [j, i]; })
+        .sort(function (a, b) { return rank(a[0]) - rank(b[0]) || a[1] - b[1]; }).map(function (p) { return p[0]; });
+      if (!list.length) return '';
+      return '<div class="label">' + k[0] + '</div><div class="cantgrid">' + list.map(function (j) {
+        var sub = j.petra ? 'Leth, chance *' : j.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct; }).join(' + ');
+        return '<button type="button" class="chip" data-hero="' + esc(j.hero) + '" aria-pressed="' + (o.without.indexOf(j.hero) === -1) + '">' +
+          esc(j.hero) + '<span class="sub">' + esc(sub) + '</span></button>';
+      }).join('') + '</div>';
+    }).join('');
+    // Alternatives that only swap heroes with the same ability (Amane/Margot/Luna) show once, as the ability.
+    var sameAs = {};
+    all.forEach(function (j) { if (o.without.indexOf(j.hero) === -1) (sameAs[C.abilityKey(j)] = sameAs[C.abilityKey(j)] || []).push(j.hero); });
+    var sig = function (t) { return t.map(C.abilityKey).sort().join(','); };
+    var seen = {}; seen[sig(top.team)] = true;
+    var alts = best.slice(1).filter(function (b) { var k = sig(b.team); if (seen[k]) return false; seen[k] = true; return true; }).slice(0, 4);
+    var slot = function (j) { var s = sameAs[C.abilityKey(j)] || [j.hero]; return s.length > 1 ? s.map(esc).join('/') : esc(j.hero); };
+    $('alts').innerHTML = alts.map(function (b) {
+      var tie = Math.abs(b.value - top.value) < 1e-9, up = b.value - top.value > 1e-9;
+      return '<span class="val">' + x(b.value) + (tie ? ' <b>exact tie</b>' : up ? ' <b>' + ((b.value / top.value - 1) * 100).toFixed(2) + '% higher, harder to fill</b>' : '') + '</span><span>' + b.team.map(slot).join(', ') + '</span>';
+    }).join('');
+
+    var singles = C.singlePicks(data, state.leads, o);
+    // Live crowding example for the First pick hint, from this lead team.
+    var lg = C.leaderGroups(data, state.leads, o);
+    var ex = singles.filter(function (r) { var e = r.joiner.effects; return !r.joiner.petra && e.length === 1 && lg[e[0].id]; })[0];
+    $('crowd-example').textContent = ex
+      ? 'Example with your lead team: ' + ex.joiner.hero + "'s card says +" + ex.joiner.effects[0].pct + '%, but your lead team already has ' +
+        lg[ex.joiner.effects[0].id] + '% in that bucket, so ' + ex.joiner.hero + ' really adds ' + pctAdded(ex.value) + '.'
+      : 'Your lead team leaves every joiner bucket open, so first picks add their full card value.';
+    var maxV = singles[0].value;
+    var holders = function (id) { return C.leaderContrib(data, state.leads, id, o).map(function (f) { return f.hero; }); };
+    // One row per ability: joiners whose first skill puts the same % into the same groups.
+    var rowsBy = {}, order = [];
+    singles.forEach(function (r) {
+      if (state.mode === 'bear' && r.value <= 1 + 1e-9) return; // Bear counts offense only
+      var key = r.joiner.effects.map(function (e) { return e.id + ':' + e.pct; }).join('|') + (r.joiner.petra ? '|petra' : '');
+      if (!rowsBy[key]) { rowsBy[key] = { r: r, heroes: [] }; order.push(key); }
+      rowsBy[key].heroes.push(r.joiner.hero);
+    });
+    $('single').querySelector('tbody').innerHTML = order.map(function (key) {
+      var r = rowsBy[key].r, effs = r.joiner.effects;
+      var w = maxV > 1 ? Math.max(0, (r.value - 1) / (maxV - 1)) * 100 : 0;
+      var brings = effs.map(function (e) {
+        var pct = r.joiner.petra ? C.petraPct(state.troopTypes) : e.pct;
+        return '<span class="sw ' + side(e.id) + '"></span>' + esc(groupName(e.id)) + ' +' + (pct % 1 ? pct.toFixed(1) : pct) + '%' +
+          ' <span class="hint">(' + (holders(e.id).length ? 'overlaps ' + holders(e.id).map(esc).join(', ') : 'open group') + ')</span>';
+      }).join('<br>');
+      if (r.joiner.petra) brings += '<br><span class="hint">chance skill, average value</span>';
+      return '<tr><td>' + brings + '</td><td>' + rowsBy[key].heroes.map(esc).join(', ') + '</td><td class="num">' +
+        pctAdded(r.value) + '</td><td><div class="bar ' + side(effs[0].id) + '" style="width:' + w.toFixed(0) + '%"></div></td></tr>';
+    }).join('');
+
+    renderCrowd(g, o);
+    renderLikely();
+  }
+
+  function renderLikely() {
+    if (!$('likely-sec').open && !likely(false)) {
+      $('likely').querySelector('tbody').innerHTML = '';
+      $('likely-teams').textContent = '';
+      return;
+    }
+    var res = likely(true);
+    var SHORT = { '101': 'Lethality', '102': 'Attack', '111': 'Damage taken down', '112': 'Defense', '113': 'Health', '201': 'Enemy damage down', '202': 'Enemy attack down', '203?': 'Enemy lethality down', '301': 'Enemy defense down' };
+    $('likely').querySelector('tbody').innerHTML = res.rows.map(function (r) {
+      var brings = r.joiner.petra ? 'Lethality, chance (one only)' : r.joiner.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct + '%'; }).join(' + ');
+      var pct = Math.round(r.score * 100), tier = pct >= 50 ? 'High' : pct >= 20 ? 'Medium' : pct > 0 ? 'Low' : 'Never';
+      return '<tr><td><span class="sw ' + side(r.joiner.effects[0].id) + '"></span>' + esc(brings) + '</td><td>' + r.heroes.map(esc).join(', ') +
+        '</td><td class="num"><b>' + tier + '</b> <span class="hint">' + pct + '%</span></td></tr>';
+    }).join('');
+    var col = function (i) { return res.teams.map(function (t) { return t[i]; }).filter(function (h, k, a) { return a.indexOf(h) === k; }).join(', '); };
+    $('likely-teams').textContent = res.teams.length + ' lead teams checked, every mix of infantry (' + col(0) + '), cavalry (' + col(1) + ') and archer (' + col(2) + ').';
+  }
+
+  function renderCrowd(g, o) {
+    var ids = Object.keys(EXAMPLE).filter(function (id) { return o.mode !== 'bear' || side(id) === 'off'; });
+    if (ids.indexOf(state.crowdId) === -1) {
+      state.crowdId = ids.slice().sort(function (a, b) { return (g[b] || 0) - (g[a] || 0); })[0];
+    }
+    var sel = $('crowd-id');
+    sel.innerHTML = ids.map(function (id) {
+      return '<option value="' + id + '">' + esc(groupName(id)) + ' — lead team brings ' + (g[id] || 0) + '%</option>';
+    }).join('');
+    sel.value = state.crowdId;
+
+    var id = state.crowdId, hero = EXAMPLE[id][0], pct = EXAMPLE[id][1], have = g[id] || 0;
+    var from = C.leaderContrib(data, state.leads, id, o);
+    var steps = from.map(function (f) { return { label: f.hero + ' · ' + f.skill, pct: f.pct, source: 'leader' }; })
+      .concat([1, 2, 3, 4].map(function (n) { return { label: 'Joiner ' + n + ': ' + hero, pct: pct, source: 'joiner' }; }));
+    var all = C.crowdSteps(steps);
+    var leadRows = all.filter(function (r) { return r.source === 'leader'; });
+    var rows = all.filter(function (r) { return r.source === 'joiner'; });
+    var enemy = { '301': 'defense', '201': 'damage', '202': 'attack', '203?': 'lethality' }[id];
+    var cell = function (v) { return '<td class="num">' + v + '</td>'; };
+    var left = function (m) { return enemy ? cell((100 / m).toFixed(0) + '%') : ''; };
+    $('crowd-t').querySelector('thead').innerHTML = '<tr><th>Row</th><th>Skill</th><th class="num">Card</th>' +
+      '<th class="num">Effect</th>' + (enemy ? '<th class="num">Enemy ' + enemy + ' left</th>' : '') +
+      '<th class="num">Team total</th></tr>';
+    var total = function (m) { return '<b>' + pctAdded(m) + '</b> (×' + m.toFixed(2) + ')'; };
+    var leadEnd = leadRows.length ? leadRows[leadRows.length - 1].multiplier : 1;
+    var leadCard = leadRows.reduce(function (a, r) { return a + r.pct; }, 0);
+    var copies = leadRows.length === 0 ? 'none' : leadRows.length === 1 ? 'copy 1' : 'copies 1–' + leadRows.length;
+    var html = '<tr><td>0</td><td><b>Lead team</b> (' + copies + ')<br><span class="hint">' +
+      (leadRows.length ? leadRows.map(function (r) { return 'Copy ' + r.n + ': ' + esc(r.label) + ' +' + r.pct + '% → effect ' + pctAdded(r.marginal); }).join('<br>') : 'Nothing in this group') +
+      '</span></td>' + cell(leadCard ? '+' + leadCard + '%' : '—') + cell(pctAdded(leadEnd)) + left(leadEnd) + cell(total(leadEnd)) + '</tr>';
+    rows.forEach(function (r, i) {
+      html += '<tr><td>' + (i + 1) + '</td><td>' + esc(r.label) + ' <span class="hint">(copy ' + r.n + ')</span></td>' + cell('+' + r.pct + '%') +
+        cell(pctAdded(r.marginal)) + left(r.multiplier) + cell(total(r.multiplier)) + '</tr>';
+    });
+    $('crowd-t').querySelector('tbody').innerHTML = html;
+    var four = rows[rows.length - 1].sinceLeader;
+    $('crowd-say').textContent = 'Four ' + hero + 's carry +' + (4 * pct) + '% on their cards. On top of this lead team they really add ' + pctAdded(four) +
+      (from.length ? ', because the lead team already holds copies 1–' + from.length + ' of this group.' : '. The group starts empty, so only the stacking among the four joiners shrinks it.') +
+      ' Within one bucket the cards add (two 25% cards make +50%); each step just looks smaller because it is measured against a bigger total.';
+  }
+
+  function fill() {
+    var defaults = ['Diego', 'Ava', 'Luna'];
+    ['lead1', 'lead2', 'lead3'].forEach(function (id, i) {
+      var list = data.leaders.filter(function (l) { return l.class === CLASSES[i]; });
+      var el = $(id);
+      el.innerHTML = list.map(function (l) { return '<option value="' + esc(l.hero) + '">' + esc(l.hero) + ' (Gen ' + l.gen + ')</option>'; }).join('');
+      el.value = state.leads[i];
+      if (el.value !== state.leads[i]) { el.value = defaults[i]; state.leads[i] = el.value; }
+      el.addEventListener('change', function () { state.leads[i] = el.value; save(); render(); });
+    });
+    var gens = data.leaders.map(function (l) { return l.gen; }).concat(data.joiners.map(function (j) { return j.gen || 0; }));
+    var maxGen = Math.max.apply(null, gens);
+    DEFAULT_GEN = maxGen;
+    var gsel = $('likely-gen');
+    for (var n = 1; n <= maxGen; n++) gsel.innerHTML += '<option value="' + n + '">Gen ' + n + (n === maxGen ? ' (newest)' : '') + '</option>';
+    gsel.value = String(state.likelyGen || DEFAULT_GEN);
+    gsel.addEventListener('change', function (ev) { state.likelyGen = Number(ev.target.value); save(); render(); });
+    $('likely-sec').addEventListener('toggle', function () { if ($('likely-sec').open) renderLikely(); });
+    $('crowd-id').addEventListener('change', function (ev) { state.crowdId = ev.target.value; save(); render(); });
+    seg('mode', 'mode', String); seg('types', 'troopTypes', Number);
+    $('cant').addEventListener('click', function (ev) {
+      var btn = ev.target.closest && ev.target.closest('[data-hero]'), h = btn && btn.getAttribute('data-hero');
+      if (!h) return;
+      var w = state.without || [], i = w.indexOf(h);
+      if (i === -1) w.push(h); else w.splice(i, 1);
+      state.without = w; save(); render();
+    });
+    $('updated').textContent = 'Hero data updated ' + data.updated + '.';
+    render();
+  }
+
+  fetch('heroes.json').then(function (r) { if (!r.ok) throw 0; return r.json(); })
+    .catch(function () { return fetch('data/heroes.json').then(function (r) { return r.json(); }); })
+    .then(function (d) {
+      data = d;
+      return fetch('likely.json').then(function (r) { if (!r.ok) throw 0; return r.json(); })
+        .catch(function () { return fetch('data/likely.json').then(function (r) { if (!r.ok) throw 0; return r.json(); }); })
+        .then(function (l) { likelySaved = l; }, function () { likelySaved = null; });
+    })
+    .then(function () { fill(); })
+    .catch(function () { $('best-x').textContent = 'Hero data failed to load. Reload the page.'; });
+})();
+</script>
