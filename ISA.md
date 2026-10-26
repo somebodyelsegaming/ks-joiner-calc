@@ -141,6 +141,8 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 
 - 2026-10-26 (SE's summary, confirmed): power = lead's stats x buffs x rally skills (lead team's skills + first 4 joiners' first skills), times troop count. Hero base stats sit in stats; widgets sit in buffs. SE confirmed (keeping it simple): pets, castle appointments, purchased city buffs and widgets all go in the multiplicative buffs. Garrisons use the first 4 listed reinforcements as the 4 joiners; a few caveats exist, but it works about the same as a rally.
 
+- 2026-10-26 (SE): published publicly at https://github.com/somebodyelsegaming/ks-joiner-calc, live on GitHub Pages at https://somebodyelsegaming.github.io/ks-joiner-calc/ (checked: page loads, data loads, best four renders). Layout matches pet-material-planner: page at the repo root, README, MIT LICENSE. Public `main` starts from one clean commit; the earlier history stays in the local-only branch `local-history`, which must never be pushed. Google Fonts kept, as in the pet planner.
+
 ## Assumptions
 
 - Gen 8 skill ids are unpublished. Diego and Ava's lethality skills are assumed 101, Luna's attack skill 102, and Diego's Def/HP skill 112/113. Matched by wording.
