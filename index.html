@@ -128,6 +128,10 @@ PvP counts both sides:
 
   <section class="panel controls" aria-label="Rally setup">
     <div>
+      <label class="pick" style="max-width:220px"><span class="label">Newest generation on your server</span><select id="likely-gen"></select></label>
+      <p class="hint">Heroes newer than this are left out everywhere, lead heroes included.</p>
+    </div>
+    <div>
       <div class="label" id="lead-label">Lead team (rally or garrison)</div>
       <div class="leaders" role="group" aria-labelledby="lead-label">
         <label class="pick"><span class="hint">Infantry</span><select id="lead1"></select></label>
@@ -149,10 +153,6 @@ PvP counts both sides:
           <button type="button" data-v="3" aria-pressed="true">3</button>
           <button type="button" data-v="2" aria-pressed="false">2</button>
         </div>
-      </div>
-      <div>
-        <label class="pick" style="max-width:220px"><span class="label">Newest generation on your server</span><select id="likely-gen"></select></label>
-        <p class="hint">Joiners newer than this are left out everywhere.</p>
       </div>
     </div>
     <p class="hint" id="mode-hint"></p>
@@ -533,23 +533,32 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
       ' Within one bucket the cards add (two 25% cards make +50%); each step just looks smaller because it is measured against a bigger total.';
   }
 
-  function fill() {
-    var defaults = ['Diego', 'Ava', 'Luna'];
+  // Lead dropdowns list only heroes released by the picked generation. A lead that is
+  // now too new swaps to the newest allowed hero of that troop type.
+  function fillLeads() {
+    var defaults = ['Diego', 'Ava', 'Luna'], g = state.likelyGen || DEFAULT_GEN;
     ['lead1', 'lead2', 'lead3'].forEach(function (id, i) {
-      var list = data.leaders.filter(function (l) { return l.class === CLASSES[i]; });
-      var el = $(id);
+      var list = data.leaders.filter(function (l) { return l.class === CLASSES[i] && l.gen <= g; });
+      var el = $(id), has = function (h) { return list.some(function (l) { return l.hero === h; }); };
       el.innerHTML = list.map(function (l) { return '<option value="' + esc(l.hero) + '">' + esc(l.hero) + ' (Gen ' + l.gen + ')</option>'; }).join('');
+      var newest = list.reduce(function (a, l) { return !a || l.gen > a.gen ? l : a; }, null);
+      state.leads[i] = has(state.leads[i]) ? state.leads[i] : has(defaults[i]) ? defaults[i] : newest.hero;
       el.value = state.leads[i];
-      if (el.value !== state.leads[i]) { el.value = defaults[i]; state.leads[i] = el.value; }
-      el.addEventListener('change', function () { state.leads[i] = el.value; save(); render(); });
     });
+  }
+
+  function fill() {
     var gens = data.leaders.map(function (l) { return l.gen; }).concat(data.joiners.map(function (j) { return j.gen || 0; }));
     var maxGen = Math.max.apply(null, gens);
     DEFAULT_GEN = maxGen;
     var gsel = $('likely-gen');
     for (var n = 1; n <= maxGen; n++) gsel.innerHTML += '<option value="' + n + '">Gen ' + n + (n === maxGen ? ' (newest)' : '') + '</option>';
     gsel.value = String(state.likelyGen || DEFAULT_GEN);
-    gsel.addEventListener('change', function (ev) { state.likelyGen = Number(ev.target.value); save(); render(); });
+    gsel.addEventListener('change', function (ev) { state.likelyGen = Number(ev.target.value); fillLeads(); save(); render(); });
+    ['lead1', 'lead2', 'lead3'].forEach(function (id, i) {
+      $(id).addEventListener('change', function () { state.leads[i] = $(id).value; save(); render(); });
+    });
+    fillLeads();
     $('likely-sec').addEventListener('toggle', function () { if ($('likely-sec').open) renderLikely(); });
     $('crowd-id').addEventListener('change', function (ev) { state.crowdId = ev.target.value; save(); render(); });
     seg('mode', 'mode', String); seg('types', 'troopTypes', Number);

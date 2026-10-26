@@ -145,6 +145,8 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 
 - 2026-10-26 (SE): text wraps at the full page width (62ch/90ch caps removed). Troop types hint moved from the controls into the Petra note. The 0.5% window is relative to the best four's total multiplier: a lineup counts as "good enough" when its total is at least 99.5% of the highest (e.g. x2.110 best, so x2.0995 or more).
 
+- 2026-10-26 (SE): generation picker moved above the lead dropdowns, and it now limits them too: lead heroes newer than the picked generation are hidden. A picked lead that becomes too new swaps to the newest allowed hero of that troop type. Raising the generation again keeps the current leads.
+
 ## Assumptions
 
 - Gen 8 skill ids are unpublished. Diego and Ava's lethality skills are assumed 101, Luna's attack skill 102, and Diego's Def/HP skill 112/113. Matched by wording.
