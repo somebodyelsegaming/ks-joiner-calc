@@ -143,6 +143,8 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 
 - 2026-10-26 (SE): published publicly at https://github.com/somebodyelsegaming/ks-joiner-calc, live on GitHub Pages at https://somebodyelsegaming.github.io/ks-joiner-calc/ (checked: page loads, data loads, best four renders). Layout matches pet-material-planner: page at the repo root, README, MIT LICENSE. Public `main` starts from one clean commit; the earlier history stays in the local-only branch `local-history`, which must never be pushed. Google Fonts kept, as in the pet planner.
 
+- 2026-10-26 (SE): text wraps at the full page width (62ch/90ch caps removed). Troop types hint moved from the controls into the Petra note. The 0.5% window is relative to the best four's total multiplier: a lineup counts as "good enough" when its total is at least 99.5% of the highest (e.g. x2.110 best, so x2.0995 or more).
+
 ## Assumptions
 
 - Gen 8 skill ids are unpublished. Diego and Ava's lethality skills are assumed 101, Luna's attack skill 102, and Diego's Def/HP skill 112/113. Matched by wording.
