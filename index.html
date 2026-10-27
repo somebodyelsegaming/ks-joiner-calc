@@ -111,18 +111,21 @@ a { color: var(--accent); }
     <div class="inner">
 <pre>Rally power = Stats × Buffs × Skills</pre>
       <p><b>1. Stats.</b> Your battle report % from gear, research, charms and heroes. They work in two pairs: (<b>Attack</b> × <b>Lethality</b>) and (<b>Defense</b> × <b>Health</b>). Inside each pair a point helps most on the lower stat, so <b>raise the lower stat of each pair first</b>. Joiners can't fix this.</p>
+<pre><i>Example: Attack 5 × Lethality 3 = 15
+  +1 Attack:     6 × 3 = 18
+  +1 Lethality:  5 × 4 = 20   the lower stat gains more</i></pre>
       <p><b>2. Buffs (other multipliers).</b> Widgets, pets, city buffs and titles (King, Marshal and so on). Same-stat buffs add up, then multiply your stats. Enemy-down buffs shrink their stat. In a rally, only the leader's widgets count.</p>
       <p><b>3. Skills.</b> The lead heroes' skills plus each joiner's first skill. Same-stat bonuses add up in one bucket, and the buckets multiply. This page only covers this part.</p>
 <pre>Kills scale with:  your stats ÷ enemy stats  ×  skill boost
                     └ fixed by you ────────┘     └ joiners only change this
 
-A joiner's worth is relative: skill boost with them ÷ skill boost without them
-Your stats are the same either way, so they don't change the answer.
+Your stats are already fixed, so this page sets them aside.
 
-Example: 2 lethality joiners at 25% already give +50%.
-  A 3rd one: 1.75 ÷ 1.50, so it really adds +16.7%, not the +25% on its card.
+• A joiner's worth is relative: skill boost with them ÷ skill boost without them
+    <i>Example: 2 lethality joiners at 25% already give +50%.
+    A 3rd one: 1.75 ÷ 1.50, so it really adds +16.7%, not the +25% on its card.</i>
 
-PvP counts both sides:
+• PvP counts both sides:
   Damage you deal = (Attack × Lethality) ÷ (their Defense × Health) × your offense buckets
   Damage you take = (their Attack × Lethality) ÷ (Defense × Health) ÷ your defense buckets</pre>
       <p>So two players with the same three lead heroes want the same joiners, whatever their stats. Each joiner brings its own multiplier, and crowding decides how much it really adds.</p>
