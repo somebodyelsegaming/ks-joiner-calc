@@ -147,6 +147,8 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 
 - 2026-10-26 (SE): generation picker moved above the lead dropdowns, and it now limits them too: lead heroes newer than the picked generation are hidden. A picked lead that becomes too new swaps to the newest allowed hero of that troop type. Raising the generation again keeps the current leads.
 
+- 2026-10-26 (SE): compared against kingshotjoinercalculator.netlify.app (now "Kingshot Portal", calculator tab public; read from the rendered page only). Formula and 16 joiner values match. Every difference is already a decision here: Charles 202 vs our 203?, Vivian 25% vs 20% and left out, Petra counted at full 50% vs our expected value, Thrud and Alcar counted vs left out. Their Eric G2 and Margot G3 are wrong; SE confirmed Eric Gen 3, Margot Gen 4, as our data has. They stop at Gen 7 (no Diego or Luna). No data changes.
+
 ## Assumptions
 
 - Gen 8 skill ids are unpublished. Diego and Ava's lethality skills are assumed 101, Luna's attack skill 102, and Diego's Def/HP skill 112/113. Matched by wording.
@@ -157,6 +159,7 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 - Base stats vs skills (estimate, 2026-10-25): a hero's stat % adds to that troop type's other bonuses (layer 1). With 1,500% other bonuses, a 1-gen gap is about x1.06 on that troop's attack and again on its defense; 4 gens x1.21; 7 gens (Amadeus vs Diego) x1.32. One extra open 25% skill is x1.25 on the whole army. Amadeus/Ava/Luna and Diego/Ava/Luna skills tie (x6.87 vs x6.88 with best 4), so Diego's stats decide it. Chance skills are left out of that comparison.
 - Widgets never apply to solo marches (SE, 2026-10-25). Rally widgets need this hero leading a rally; defender widgets need defending or garrisoning.
 - Troop count (the AI assistant sim, 2026-10-25, tools/kill_sim.py formula: kills = k·√(own)·√(smaller side)·Atk/Def, equal stats): the smaller side's damage scales about linearly, not by √. 1.8M vs 2.0M: offense wiped, defense keeps 28%; to tie it needs x1.08 on offense and defense (x1.17 total). 1.5M vs 2.0M: defense keeps 50%; tie needs x1.24 each (x1.54 total). Corrects the AI assistant's earlier "√ halves the gap" answer.
+- Vivian's joiner skill is in group 101 (lethality / damage up), as both the joiner calculator and our data have it (2026-10-26). Her card says "enemy damage taken +25%", which could be its own group like Ava's 301. Not verified. If it is separate, about 20% in an open group beats a fourth 101 joiner, and she goes back in the pool. Recheck if Frakinator or Sloth publishes her id.
 
 ## Remaining Work
 
