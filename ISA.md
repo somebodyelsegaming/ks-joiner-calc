@@ -149,6 +149,8 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 
 - 2026-10-26 (SE): compared against kingshotjoinercalculator.netlify.app (now "Kingshot Portal", calculator tab public; read from the rendered page only). Formula and 16 joiner values match. Every difference is already a decision here: Charles 202 vs our 203?, Vivian 25% vs 20% and left out, Petra counted at full 50% vs our expected value, Thrud and Alcar counted vs left out. Their Eric G2 and Margot G3 are wrong; SE confirmed Eric Gen 3, Margot Gen 4, as our data has. They stop at Gen 7 (no Diego or Luna). No data changes.
 
+- 2026-10-27 (SE): page wording pass (commits 752391f, d0c2c94, both live). Vivian left out because how her skill works and its group are unclear (the "near 20%" line dropped). Thrud and Alcar left out because joiners are picked to work with any formation. Petra: her +50% is on or off, so a second Petra only adds chances (3 types 87.5% to 98.4%; 2 types 75% to 93.75%) and a regular joiner is usually the better slot. Chance skills: left out for steady results; Petra's 87.5% is close to always on. "3 components" box: stats set aside first, joiner worth worded as relative with the 3rd-lethality example (1.75 ÷ 1.50 = +16.7%), and a small stats example (Attack 5 × Lethality 3: +1 Attack 18, +1 Lethality 20). Not yet checked in a browser or on a phone.
+
 ## Assumptions
 
 - Gen 8 skill ids are unpublished. Diego and Ava's lethality skills are assumed 101, Luna's attack skill 102, and Diego's Def/HP skill 112/113. Matched by wording.
