@@ -116,8 +116,11 @@ a { color: var(--accent); }
 <pre>Kills scale with:  your stats ÷ enemy stats  ×  skill boost
                     └ fixed by you ────────┘     └ joiners only change this
 
-A joiner's worth = skill boost with them ÷ skill boost without them
-                   (your stats cancel out)
+A joiner's worth is relative: skill boost with them ÷ skill boost without them
+Your stats are the same either way, so they don't change the answer.
+
+Example: 2 lethality joiners at 25% already give +50%.
+  A 3rd one: 1.75 ÷ 1.50, so it really adds +16.7%, not the +25% on its card.
 
 PvP counts both sides:
   Damage you deal = (Attack × Lethality) ÷ (their Defense × Health) × your offense buckets
@@ -268,9 +271,9 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
   </details>
 
   <section class="notes" aria-label="Notes and sources">
-    <p><b>Left out on purpose:</b> Vivian, because her lethality skill works out near 20% while Chenko and Yeonwoo give 25% in the same group. Thrud and Alcar, because their skills only reach some troop types, so their value depends on formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
-    <p><b>Petra is included</b> because a rally always sends at least two troop types. Her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). Only one Petra is counted, and she is dropped if the lead team already has her. The troop types picker at the top only changes this Petra number.</p>
-    <p><b>Chance-based skills:</b> outside of Petra, chance-based skills are traditionally not wanted for joiners. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group.</p>
+    <p><b>Left out on purpose:</b> Vivian, because it is unclear how her skill works and which skill group it belongs to. Thrud and Alcar, because their skills only reach some troop types; joiners here are picked to work with any formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
+    <p><b>Petra is included</b> because a rally always sends at least two troop types. Her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). Her buff is either on or off. A second Petra only adds another chance to turn it on; it does not stack, so a regular joiner is usually the better use of that slot. Only one Petra is counted, and she is dropped if the lead team already has her. The troop types picker at the top only changes this Petra number.</p>
+    <p><b>Chance-based skills:</b> joiners are picked for steady results, so chance-based skills are normally left out. Petra is the exception: 87.5% is close to always on, where other chance skills can be as low as 40%. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group.</p>
     <p><b>Charles</b> (enemy lethality down) is assumed to be his own group, separate from Eric's enemy attack down, until a battle test shows otherwise.</p>
     <p><b>Assumed:</b> every joiner's first skill is level 5 (the hero is 4-star or better), so it brings the full % on its card.</p>
     <p><b>Assumed:</b> in PvP, your damage dealt and damage taken count the same (both sides attack every round). Bear is one-sided, so damage output is what matters.</p>
