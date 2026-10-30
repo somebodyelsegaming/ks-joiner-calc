@@ -167,6 +167,7 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 - 2026-10-30 (SE): first footnote is now "Why defense may matter too": the common advice, our hypothesis, a labeled made-up example (100 × 10 rounds vs 80 × 15 rounds), and "Subject to change as more testing comes in". SE's reason for that wording: other players already say there are just PvP joiners, not offensive and defensive ones; this page adds crowding on top. Evidence is still only `tools/compare_sim.py`, not real battles. Kept hidden in Bear.
 - 2026-10-30 (SE): that footnote's math moved into a code block, like the examples in "The 3 components of rally power"; the 5-round short-fight case is in the block too.
 - 2026-10-30 (SE): "Why defense may matter too" is now its own collapsible item inside the compare footnote, starting closed, and still hidden in Bear.
+- 2026-10-30 (SE): the 5-round example is cut. A caveat replaces it: troops die a few at a time, so damage falls each round, and fight length and how fast troops die can change which team comes out ahead. `tools/compare_sim.py` supports "can" (enemy at 2x: B ahead at 30 rounds, A by 50); not checked against real battles.
 
 ## Assumptions
 
