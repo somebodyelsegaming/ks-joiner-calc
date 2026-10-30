@@ -100,6 +100,8 @@ details .inner { padding: 0 18px 18px; display: grid; gap: 12px; }
 .cmp-slot .val { text-align: right; }
 .cmp-reset { font: inherit; font-weight: 600; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); padding: 9px 16px; min-height: 44px; cursor: pointer; justify-self: start; }
 .cmp-reset:disabled { color: var(--muted); cursor: default; opacity: .6; }
+.cmp-why { display: grid; gap: 8px; min-width: 0; }
+.cmp-why[hidden] { display: none; }
 .cmp-key { background: var(--accent-soft); border-color: var(--accent-soft); }
 .cmp-key p { margin: 0; }
 .cmp-lines { display: grid; gap: 4px; font-weight: 600; }
@@ -227,7 +229,19 @@ Your stats are already fixed, so this page sets them aside.
     <div class="inner">
       <p class="hint">Both teams use the lead team, battle type and troop types picked above. Change any slot to match what you run; Reset goes back to that team's default.</p>
       <div class="cmp-grid" id="cmp-grid"></div>
-      <p class="hint" id="cmp-why"><b>Why defense may matter too:</b> The common advice is to max out damage and ignore the rest. Our hypothesis is that defense also adds damage, because it keeps your troops alive for more rounds.<br>Made-up example: 100 damage a round for 10 rounds = 1,000 total. 80 damage a round for 15 rounds = 1,200 total. The weaker hitter deals more overall because it gets more rounds.<br>If the fight ends early, the harder hitter can still come out ahead. Subject to change as more testing comes in.</p>
+      <div class="cmp-why" id="cmp-why">
+        <p class="hint"><b>Why defense may matter too:</b> The common advice is to max out damage and ignore the rest. Our hypothesis is that defense also adds damage, because it keeps your troops alive for more rounds.</p>
+<pre><i>Made-up example, damage per round × rounds alive:
+  Harder hitter: 100 × 10 = 1,000
+  Weaker hitter:  80 × 15 = 1,200
+  More rounds, more total.
+
+If the fight ends at round 5:
+  Harder hitter: 100 × 5 = 500
+  Weaker hitter:  80 × 5 = 400
+  The harder hitter is ahead.</i></pre>
+        <p class="hint">Subject to change as more testing comes in.</p>
+      </div>
       <p class="hint"><b>What the numbers mean:</b> Total = Offense × Defense. Offense is the skills that help you hurt the enemy, including weakening its defense (Ava). Defense is the skills that protect your troops, including weakening its damage (Fahd). Bear only counts offense, so there Total and Offense are the same.</p>
       <p class="hint"><b>How "% higher" is worked out:</b> higher number ÷ lower number, minus 1. Example, 1.605 vs 1.000: 1.605 ÷ 1.000 − 1 = 60.5% higher. Measured the other way, the same gap is 37.7% lower (1 − 1.000 ÷ 1.605), because it is divided by the bigger number. This section always shows % higher, worked out before rounding, so dividing the rounded numbers shown can differ slightly.</p>
       <p class="hint"><b>Slots and hero lists:</b> Each slot's gain is counted on top of the slots above it, so reordering changes the slot gains but not the total. Any hero released by your generation can be picked here, even if it's off in your joiner pool; heroes left out of the page (see Notes and assumptions) are not listed. No joiner leaves a slot empty. A second Petra only adds more chances to trigger, so she adds far less than the first.</p>
