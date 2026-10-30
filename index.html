@@ -123,12 +123,12 @@ Your stats are already fixed, so this page sets them aside.
 
 • A joiner's worth is relative: skill boost with them ÷ skill boost without them
     <i>Example: 2 lethality joiners at 25% already give +50%.
-    A 3rd one: 1.75 ÷ 1.50, so it really adds +16.7%, not the +25% on its card.</i>
+    A 3rd one: 1.75 ÷ 1.50, so its real gain is +16.7%, not the +25% on its card.</i>
 
 • PvP counts both sides:
   Damage you deal = (Attack × Lethality) ÷ (their Defense × Health) × your offense buckets
   Damage you take = (their Attack × Lethality) ÷ (Defense × Health) ÷ your defense buckets</pre>
-      <p>So two players with the same three lead heroes want the same joiners, whatever their stats. Each joiner brings its own multiplier, and crowding decides how much it really adds.</p>
+      <p>So two players with the same three lead heroes want the same joiners, whatever their stats. Each joiner brings its own multiplier, and crowding decides its real gain.</p>
     </div>
   </details>
 
@@ -222,7 +222,7 @@ Your stats are already fixed, so this page sets them aside.
     <summary id="single-h">First pick only: every joiner ability</summary>
     <div class="inner">
     <p class="hint">What each joiner adds as the first and only joiner. These numbers change after each pick, because every pick crowds its group. <span id="crowd-example"></span> For backups, turn off the heroes you can't get in Shape your joiner pool.</p>
-    <div class="scroll"><table id="single"><thead><tr><th>What they bring</th><th>Joiners with it</th><th class="num">Really adds</th><th style="width:22%"></th></tr></thead><tbody></tbody></table></div>
+    <div class="scroll"><table id="single"><thead><tr><th>What they bring</th><th>Joiners with it</th><th class="num">Real gain</th><th style="width:22%"></th></tr></thead><tbody></tbody></table></div>
     </div>
   </details>
 
@@ -253,7 +253,7 @@ Your stats are already fixed, so this page sets them aside.
       <p>Bonuses to the same stat (attack, lethality, defense, health, and so on) add together inside one bucket. The buckets then multiply together for the final result. So each extra copy in a bucket is a smaller step up, and a joiner only adds its full card value when its bucket is empty.</p>
       <label class="pick" style="max-width:420px"><span class="label">Skill group</span><select id="crowd-id"></select></label>
       <div class="scroll"><table id="crowd-t"><thead><tr><th>Row</th><th>In the group</th><th class="num">Group total</th><th class="num">This step adds</th><th class="num">Joiners so far</th></tr></thead><tbody></tbody></table></div>
-      <p class="hint">Row 0 is the lead team (rally or garrison): every skill its three heroes have in this group. Rows 1–4 are joiners added one at a time; only 4 joiner skills count. Effect is how much that row really raises the result. For debuffs, "enemy left" shows the same thing from their side. A −25% card (Ava) leaves them 80%, the same as +25% for you, not 75%. A −20% card (Fahd, Eric) leaves 83%, the same as +20%.</p>
+      <p class="hint">Row 0 is the lead team (rally or garrison): every skill its three heroes have in this group. Rows 1–4 are joiners added one at a time; only 4 joiner skills count. Real gain is how much that row raises the result. For debuffs, "enemy left" shows the same thing from their side. A −25% card (Ava) leaves them 80%, the same as +25% for you, not 75%. A −20% card (Fahd, Eric) leaves 83%, the same as +20%.</p>
       <p id="crowd-say"></p>
     </div>
   </details>
@@ -274,12 +274,11 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
   </details>
 
   <section class="notes" aria-label="Notes and sources">
-    <p><b>Left out on purpose:</b> Vivian. Her card is a flat "enemy damage taken +25%" in Petra's skill group. Whether she adds anything when a Petra is in the same rally, or whether two Vivians add, has not been tested, and players report mixed results with her in Bear. Left out until a battle test settles it (no Petra: 3 Chenko + Vivian against 4 Chenko). Thrud and Alcar, because their skills only reach some troop types; joiners here are picked to work with any formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
-    <p><b>Petra is included</b> because a rally always sends at least two troop types. Her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). Her buff is either on or off. It is its own skill group ("enemy damage taken up"), separate from lethality, so she never crowds Chenko or Yeonwoo. The group does nothing on the first turn of a battle; Bear lasts 10 rounds, so her Bear value is 9/10 of the above (39.4%). Source: Sloth and Frakinator's engineered test battles (2026). A second Petra only adds another chance to turn it on; it does not stack, so a regular joiner is usually the better use of that slot. Only one Petra is counted, and she is dropped if the lead team already has her. The troop types picker at the top only changes this Petra number.</p>
-    <p><b>Chance-based skills:</b> joiners are picked for steady results, so chance-based skills are normally left out. Petra is the exception: 87.5% is close to always on, where other chance skills can be as low as 40%. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group. The one exception is Rosa's Chaos Gambit, which Sloth and Frakinator tested as a stacking lethality skill: it counts at its 20% average.</p>
-    <p><b>Charles</b> (enemy lethality down) is assumed to be his own group, separate from Eric's enemy attack down, until a battle test shows otherwise.</p>
-    <p><b>Assumed:</b> every joiner's first skill is level 5 (the hero is 4-star or better), so it brings the full % on its card. The game counts the first four joiners whose first skill is level 5; a joiner with a lower-level skill is skipped, not counted at a lower %, and the next joiner in line takes the slot (kingshotguides.com).</p>
-    <p><b>Assumed:</b> in PvP, your damage dealt and damage taken count the same (both sides attack every round). Bear is one-sided, so damage output is what matters.</p>
+    <p><b>Left out on purpose:</b> Vivian. Her card is a flat "enemy damage taken +25%" in Petra's skill group. Whether she adds anything when a Petra is in the same rally, or whether two Vivians add, has not been tested, and players report mixed results with her in Bear. Left out until a battle test settles it. Thrud and Alcar, because their skills only reach some troop types; joiners here are picked to work with any formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
+    <p><b>Petra:</b> her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). It is its own skill group ("enemy damage taken up"), separate from lethality, so she never crowds Chenko or Yeonwoo. The group does nothing on the first turn of a battle; Bear lasts 10 rounds, so her Bear value is 9/10 of the above (39.4% with 3 types). Source: Sloth and Frakinator's engineered test battles (2026). Only one Petra counts, and she is dropped if the lead team already has her. The troop types picker at the top only changes this Petra number.</p>
+    <p><b>Consistent results:</b> joiners are picked for consistent, repeatable results, so chance-based skills are normally left out. Petra is the exception: 87.5% is close to always on, where other chance skills can be as low as 40%. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group. The one exception is Rosa's Chaos Gambit, which Sloth and Frakinator tested as a stacking lethality skill: it counts at its 20% average.</p>
+    <p><b>Which joiners count:</b> the first four whose first skill is level 5. A joiner with a lower-level skill gives up its slot to the next level 5 joiner in line (kingshotguides.com). This page assumes all four are level 5 (the hero is 4-star or better), so each brings the full % on its card.</p>
+    <p><b>Assumed:</b> in PvP, your damage dealt and damage taken count the same.</p>
     <p><b>Sources, most trusted first:</b> Frakinator (frakinator.streamlit.app), Sloth / KingshotOptimizer, Daryl / kingshotguides.com; then kingshotjoinercalculator.netlify.app, kingshotcalculator.com and kingshotdata.com for skill wording. Gen 9 heroes are not in yet.</p>
     <p id="updated"></p>
   </section>
@@ -450,7 +449,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     var ex = singles.filter(function (r) { var e = r.joiner.effects; return !r.joiner.petra && e.length === 1 && lg[e[0].id]; })[0];
     $('crowd-example').textContent = ex
       ? 'Example with your lead team: ' + ex.joiner.hero + "'s card says +" + ex.joiner.effects[0].pct + '%, but your lead team already has ' +
-        lg[ex.joiner.effects[0].id] + '% in that bucket, so ' + ex.joiner.hero + ' really adds ' + pctAdded(ex.value) + '.'
+        lg[ex.joiner.effects[0].id] + '% in that bucket, so ' + ex.joiner.hero + "'s real gain is " + pctAdded(ex.value) + '.'
       : 'Your lead team leaves every joiner bucket open, so first picks add their full card value.';
     var maxV = singles[0].value;
     var holders = function (id) { return C.leaderContrib(data, state.leads, id, o).map(function (f) { return f.hero; }); };
@@ -519,14 +518,14 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     var cell = function (v) { return '<td class="num">' + v + '</td>'; };
     var left = function (m) { return enemy ? cell((100 / m).toFixed(0) + '%') : ''; };
     $('crowd-t').querySelector('thead').innerHTML = '<tr><th>Row</th><th>Skill</th><th class="num">Card</th>' +
-      '<th class="num">Effect</th>' + (enemy ? '<th class="num">Enemy ' + enemy + ' left</th>' : '') +
+      '<th class="num">Real gain</th>' + (enemy ? '<th class="num">Enemy ' + enemy + ' left</th>' : '') +
       '<th class="num">Team total</th></tr>';
     var total = function (m) { return '<b>' + pctAdded(m) + '</b> (×' + m.toFixed(2) + ')'; };
     var leadEnd = leadRows.length ? leadRows[leadRows.length - 1].multiplier : 1;
     var leadCard = leadRows.reduce(function (a, r) { return a + r.pct; }, 0);
     var copies = leadRows.length === 0 ? 'none' : leadRows.length === 1 ? 'copy 1' : 'copies 1–' + leadRows.length;
     var html = '<tr><td>0</td><td><b>Lead team</b> (' + copies + ')<br><span class="hint">' +
-      (leadRows.length ? leadRows.map(function (r) { return 'Copy ' + r.n + ': ' + esc(r.label) + ' +' + r.pct + '% → effect ' + pctAdded(r.marginal); }).join('<br>') : 'Nothing in this group') +
+      (leadRows.length ? leadRows.map(function (r) { return 'Copy ' + r.n + ': ' + esc(r.label) + ' +' + r.pct + '% → real gain ' + pctAdded(r.marginal); }).join('<br>') : 'Nothing in this group') +
       '</span></td>' + cell(leadCard ? '+' + leadCard + '%' : '—') + cell(pctAdded(leadEnd)) + left(leadEnd) + cell(total(leadEnd)) + '</tr>';
     rows.forEach(function (r, i) {
       html += '<tr><td>' + (i + 1) + '</td><td>' + esc(r.label) + ' <span class="hint">(copy ' + r.n + ')</span></td>' + cell('+' + r.pct + '%') +
@@ -534,7 +533,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     });
     $('crowd-t').querySelector('tbody').innerHTML = html;
     var four = rows[rows.length - 1].sinceLeader;
-    $('crowd-say').textContent = 'Four ' + hero + 's carry +' + (4 * pct) + '% on their cards. On top of this lead team they really add ' + pctAdded(four) +
+    $('crowd-say').textContent = 'Four ' + hero + 's carry +' + (4 * pct) + '% on their cards. On top of this lead team their real gain is ' + pctAdded(four) +
       (from.length ? ', because the lead team already holds copies 1–' + from.length + ' of this group.' : '. The group starts empty, so only the stacking among the four joiners shrinks it.') +
       ' Within one bucket the cards add (two 25% cards make +50%); each step just looks smaller because it is measured against a bigger total.';
   }
