@@ -90,6 +90,16 @@ details > summary::-webkit-details-marker { display: none; }
 details > summary::after { content: "+"; color: var(--accent); }
 details[open] > summary::after { content: "−"; }
 details .inner { padding: 0 18px 18px; display: grid; gap: 12px; }
+.cmp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 640px) { .cmp-grid { grid-template-columns: 1fr; } }
+.cmp-team { border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.cmp-team h3 { font-family: var(--display); font-size: 1.15rem; margin: 0; }
+.cmp-split { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; font-size: .95rem; }
+.cmp-slot { display: grid; grid-template-columns: minmax(0, 1fr) 4.2em; gap: 10px; align-items: center; }
+.cmp-slot .val { text-align: right; }
+.cmp-reset { font: inherit; font-weight: 600; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); padding: 9px 16px; min-height: 44px; cursor: pointer; justify-self: start; }
+.cmp-reset:disabled { color: var(--muted); cursor: default; opacity: .6; }
+.cmp-say { font-weight: 600; margin: 0; }
 pre { white-space: pre; overflow-x: auto; }
 
 pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: .9rem; line-height: 1.45; margin: 0; }
@@ -209,6 +219,16 @@ Your stats are already fixed, so this page sets them aside.
     </div>
   </section>
 
+  <details id="compare-sec">
+    <summary>Compare two joiner teams</summary>
+    <div class="inner">
+      <p class="hint">Both teams use the lead team, battle type and troop types picked above. Change any slot to match what you run; Reset goes back to that team's default. These are the same skill estimates as the best four, not a battle result.</p>
+      <div class="cmp-grid" id="cmp-grid"></div>
+      <p class="cmp-say" id="cmp-say"></p>
+      <p class="hint">Each slot's gain is counted on top of the slots above it, so reordering changes the slot gains but not the total. Any hero released by your generation can be picked here, even if it's off in your joiner pool; heroes left out of the page (see Notes and assumptions) are not listed. <span id="cmp-test"></span></p>
+    </div>
+  </details>
+
   <details id="likely-sec">
     <summary>Likely wanted in PvP</summary>
     <div class="inner">
@@ -295,11 +315,13 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
 (function () {
   'use strict';
   var C = window.JoinerCalc, data;
-  var state = { leads: ['Diego', 'Ava', 'Luna'], mode: 'pvp', troopTypes: 3, crowdId: '' };
+  var state = { leads: ['Diego', 'Ava', 'Luna'], mode: 'pvp', troopTypes: 3, crowdId: '', compare: {} };
   var CLASSES = ['inf', 'cav', 'arc'];
+  var SHORT = { '101': 'Leth', '102': 'Atk', '104': 'Enemy dmg taken', '111': 'Dmg taken', '112': 'Def', '113': 'HP', '201': 'Enemy dmg', '202': 'Enemy atk', '203?': 'Enemy leth', '301': 'Enemy def' };
   var EXAMPLE = { '101': ['Chenko', 25], '102': ['Amane', 25], '301': ['Ava', 25], '104': ['Vivian', 25], '111': ['Howard', 20],
     '112': ['Triton', 25], '113': ['Gordon', 25], '201': ['Fahd', 20], '202': ['Eric', 20], '203?': ['Charles', 20] };
   try { var saved = JSON.parse(localStorage.getItem('jp-state') || 'null'); if (saved && saved.leads) state = Object.assign(state, saved); } catch (e) {}
+  state.compare = state.compare || {};
   if (state.noPetra) { state.without = (state.without || []).concat(['Petra']); delete state.noPetra; }
   function save() { try { localStorage.setItem('jp-state', JSON.stringify(state)); } catch (e) {} }
   var DEFAULT_GEN = 7;
@@ -415,7 +437,6 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     }).join('');
     var all = C.pool(data, state.leads, { mode: o.mode, troopTypes: o.troopTypes, maxGen: o.maxGen });
     // Chips grouped by shape: hybrids, straight 25%, 20%, then chance. Damage-side heroes first in each.
-    var SHORT = { '101': 'Leth', '102': 'Atk', '104': 'Enemy dmg taken', '111': 'Dmg taken', '112': 'Def', '113': 'HP', '201': 'Enemy dmg', '202': 'Enemy atk', '203?': 'Enemy leth', '301': 'Enemy def' };
     var KINDS = [
       ['Hybrids (two stats)', function (j) { return !j.petra && j.effects.length > 1; }],
       ['Straight 25%', function (j) { return !j.petra && j.effects.length === 1 && j.effects[0].pct === 25; }],
@@ -481,7 +502,56 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     }).join('');
 
     renderCrowd(g, o);
+    renderCompare(top, o);
     renderLikely();
+  }
+
+  // Team A starts as the best four (in the order shown there), team B as a common Chenko and Amane lineup.
+  // state.compare[key] is empty until someone edits that team.
+  var CMP_B = ['Chenko', 'Chenko', 'Amane', 'Amane'];
+  function renderCompare(top, o) {
+    var bestNames = C.breakdown(data, state.leads, top.team, o).map(function (r) { return r.joiner.hero; });
+    var teams = [
+      { key: 'a', name: 'Team A', title: 'Best four', fallback: bestNames },
+      { key: 'b', name: 'Team B', title: '2 Chenko, 2 Amane', fallback: CMP_B }];
+    var allowed = C.pool(data, state.leads, { maxGen: o.maxGen });
+    var showTaken = o.mode !== 'bear';
+    var active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.cmp : null;
+    teams.forEach(function (t) {
+      t.team = C.compareTeam(data, state.leads, state.compare[t.key], t.fallback, o);
+      t.names = t.team.map(function (j) { return j.hero; });
+      t.isDefault = t.names.join() === t.fallback.join();
+      t.totals = C.compareTotals(data, state.leads, t.team, o);
+    });
+    $('cmp-grid').innerHTML = teams.map(function (t) {
+      var slots = t.team.map(function (j, i) {
+        var opt = allowed.map(function (c) {
+          var taken = c.unique && t.team.indexOf(c) !== -1 && j !== c;
+          var sub = c.petra ? 'Enemy dmg taken, chance' : c.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct; }).join(' + ');
+          return '<option value="' + esc(c.hero) + '"' + (c === j ? ' selected' : '') + (taken ? ' disabled' : '') + '>' + esc(c.hero) + ' (' + esc(taken ? 'only one counts' : sub) + ')</option>';
+        }).join('');
+        return '<div class="cmp-slot"><select aria-label="' + t.name + ' joiner ' + (i + 1) + '" data-cmp="' + t.key + i + '">' + opt + '</select><span class="val">' + pctAdded(t.totals.rows[i].value) + '</span></div>';
+      }).join('');
+      return '<div class="cmp-team"><h3>' + t.name + ': ' + esc(t.isDefault ? t.title : 'your mix') + '</h3>' +
+        '<div><span class="big">' + x(t.totals.value) + '</span> <span class="hint">on top of the lead team</span></div>' +
+        '<div class="cmp-split"><span>Damage you deal</span><span class="val">' + x(t.totals.dealt) + '</span>' +
+        (showTaken ? '<span>Damage you take</span><span class="val">÷' + t.totals.taken.toFixed(3) + '</span>' : '') + '</div>' +
+        slots + '<button type="button" class="cmp-reset" data-cmp-reset="' + t.key + '"' + (t.isDefault ? ' disabled' : '') + '>Reset ' + t.name + '</button></div>';
+    }).join('');
+    if (active) { var again = $('cmp-grid').querySelector('[data-cmp="' + active + '"]'); if (again) again.focus(); }
+    var A = teams[0].totals, B = teams[1].totals;
+    var higher = function (label, a, b) {
+      if (Math.abs(a - b) < 1e-9) return label + ': same.';
+      return label + ': ' + (a > b ? 'Team A' : 'Team B') + ' is ' + ((Math.max(a, b) / Math.min(a, b) - 1) * 100).toFixed(1) + '% higher.';
+    };
+    var takenLine = Math.abs(A.taken - B.taken) < 1e-9 ? 'Damage you take: same.'
+      : 'Damage you take: ' + (A.taken > B.taken ? 'Team A' : 'Team B') + ' takes ' + ((1 - Math.min(A.taken, B.taken) / Math.max(A.taken, B.taken)) * 100).toFixed(1) + '% less.';
+    $('cmp-say').textContent = showTaken
+      ? [higher('Total', A.value, B.value), higher('Damage you deal', A.dealt, B.dealt), takenLine].join(' ')
+      : higher('Damage you deal', A.dealt, B.dealt);
+    $('cmp-test').textContent = showTaken
+      ? 'The total counts damage you deal and damage you take as equally important. If you test this in battle, keep the lead team, troops and opponent the same and watch both sides of the report, because a team can deal more damage and still have the lower total.'
+      : 'If you test this in Bear, keep the lead team and troops the same and compare the damage.';
   }
 
   function renderLikely() {
@@ -573,6 +643,17 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     $('likely-sec').addEventListener('toggle', function () { if ($('likely-sec').open) renderLikely(); });
     $('crowd-id').addEventListener('change', function (ev) { state.crowdId = ev.target.value; save(); render(); });
     seg('mode', 'mode', String); seg('types', 'troopTypes', Number);
+    $('cmp-grid').addEventListener('change', function (ev) {
+      var id = ev.target.dataset && ev.target.dataset.cmp;
+      if (!id) return;
+      var key = id[0], names = Array.prototype.map.call($('cmp-grid').querySelectorAll('[data-cmp^="' + key + '"]'), function (s) { return s.value; });
+      state.compare[key] = names; save(); render();
+    });
+    $('cmp-grid').addEventListener('click', function (ev) {
+      var key = ev.target.dataset && ev.target.dataset.cmpReset;
+      if (!key) return;
+      delete state.compare[key]; save(); render();
+    });
     $('cant').addEventListener('click', function (ev) {
       var btn = ev.target.closest && ev.target.closest('[data-hero]'), h = btn && btn.getAttribute('data-hero');
       if (!h) return;

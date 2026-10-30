@@ -280,7 +280,38 @@
     return g;
   }
 
-  var api = { effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
+  // Names to joiners for a compare team. A name that can't be used here (too new, not a joiner,
+  // a second Petra, Petra already leading) takes the default team's hero for that slot.
+  function compareTeam(data, leaderNames, names, fallback, opts) {
+    var allowed = pool(data, leaderNames, { maxGen: opts.maxGen });
+    var find = function (n) { return allowed.find(function (j) { return j.hero === n; }); };
+    var out = [];
+    var ok = function (j) { return j && !(j.unique && out.indexOf(j) !== -1); };
+    fallback.forEach(function (f, i) {
+      var j = find((names || fallback)[i]);
+      if (!ok(j)) j = find(f);
+      if (!ok(j)) j = allowed.filter(function (c) { return !c.unique; })[0];
+      out.push(j);
+    });
+    return out;
+  }
+
+  // Totals for one compare team. `value` is the whole boost; `dealt` and `taken` split it by side.
+  // `rows` keeps the team's slot order: each joiner counted on top of the slots above it.
+  function compareTotals(data, leaderNames, team, opts) {
+    var before = leaderGroups(data, leaderNames, opts), after = teamGroups(data, leaderNames, team, opts);
+    var bySide = function (s) {
+      return Object.keys(after).filter(function (id) { return data.groups[id].side === s; }).reduce(function (p, id) {
+        return p * (1 + after[id] / 100) / (1 + (before[id] || 0) / 100);
+      }, 1);
+    };
+    var rows = team.map(function (j, i) {
+      return { joiner: j, value: product(teamGroups(data, leaderNames, team.slice(0, i + 1), opts)) / product(teamGroups(data, leaderNames, team.slice(0, i), opts)) };
+    });
+    return { value: product(after) / product(before), dealt: bySide('off'), taken: bySide('def'), rows: rows };
+  }
+
+  var api = { compareTeam: compareTeam, compareTotals: compareTotals, effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
     teamValue: teamValue, bestLineups: bestLineups, singlePicks: singlePicks,
     breakdown: breakdown, crowding: crowding, leaderContrib: leaderContrib };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

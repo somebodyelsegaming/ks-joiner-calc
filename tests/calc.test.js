@@ -245,6 +245,35 @@ test("Rosa's Chaos Gambit counts as 20% lethality when she leads (tested stackin
   assert.strictEqual(C.leaderGroups(data, ['Amadeus', 'Petra', 'Rosa'], pvp3)['101'], 45);
 });
 
+test('compare: Diego/Ava/Luna best four against 2 Chenko + 2 Amane, total and damage split', () => {
+  const o = { ...pvp3, maxGen: 8 };
+  const totals = n => C.compareTotals(data, lead, C.compareTeam(data, lead, n, n, o), o);
+  const a = totals(['Petra', 'Saul', 'Saul', 'Hilde']), b = totals(['Chenko', 'Chenko', 'Amane', 'Amane']);
+  assert.ok(near(a.value, 2.584), a.value);
+  assert.ok(near(a.dealt * a.taken, a.value));
+  assert.ok(near(b.value, 1.867) && near(b.dealt, 1.867) && b.taken === 1, JSON.stringify(b));
+  assert.ok(b.dealt > a.dealt && a.taken > b.taken);   // B deals more, A's total is higher
+  assert.ok(near(b.rows.reduce((p, r) => p * r.value, 1), b.value));
+});
+
+test('compare: Bear counts offense only, so a defense joiner adds nothing', () => {
+  const o = { mode: 'bear', troopTypes: 3, maxGen: 8 };
+  const t = C.compareTeam(data, lead, ['Gordon', 'Chenko', 'Chenko', 'Amane'], ['Chenko', 'Chenko', 'Amane', 'Amane'], o);
+  const r = C.compareTotals(data, lead, t, o);
+  assert.strictEqual(r.rows[0].value, 1);
+  assert.strictEqual(r.taken, 1);
+});
+
+test('compare: names that cannot be used fall back to the default slot', () => {
+  const o = { ...pvp3, maxGen: 8 };
+  const names = t => t.map(j => j.hero);
+  const def = ['Chenko', 'Chenko', 'Amane', 'Amane'];
+  assert.deepStrictEqual(names(C.compareTeam(data, lead, ['Petra', 'Petra', 'Amane', 'Amane'], def, o)), ['Petra', 'Chenko', 'Amane', 'Amane']);
+  assert.deepStrictEqual(names(C.compareTeam(data, ['Petra', 'Ava', 'Luna'], ['Petra', 'Saul', 'Saul', 'Saul'], def, o)), ['Chenko', 'Saul', 'Saul', 'Saul']);
+  assert.deepStrictEqual(names(C.compareTeam(data, lead, ['Luna', 'Vivian', 'Saul', 'Saul'], def, { ...pvp3, maxGen: 7 })), ['Chenko', 'Chenko', 'Saul', 'Saul']);
+  assert.deepStrictEqual(names(C.compareTeam(data, lead, null, def, o)), def);
+});
+
 test('page stays single column (SE, 2026-10-25)', () => {
   const html = require('fs').readFileSync(require('path').join(__dirname, '../index.html'), 'utf8');
   assert.ok(!/class="layout"|class="col"/.test(html));
