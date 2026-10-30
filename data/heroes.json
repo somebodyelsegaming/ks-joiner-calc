@@ -6,6 +6,7 @@
     "101": {"label": "Lethality up / damage up", "side": "off"},
     "102": {"label": "Attack up", "side": "off"},
     "301": {"label": "Enemy defense down", "side": "off"},
+    "104": {"label": "Enemy damage taken up", "side": "off", "inactiveFirstTurn": true},
     "111": {"label": "Damage taken down", "side": "def"},
     "112": {"label": "Defense up", "side": "def"},
     "113": {"label": "Health up", "side": "def"},
@@ -25,11 +26,11 @@
     {"hero": "Saul",     "gen": 1, "effects": [{"id": "112", "pct": 10}, {"id": "113", "pct": 15}], "wheel": true, "conf": "high"},
     {"hero": "Hilde",    "gen": 2, "effects": [{"id": "102", "pct": 15}, {"id": "112", "pct": 10}], "conf": "high"},
     {"hero": "Eric",     "gen": 3, "effects": [{"id": "202", "pct": 20}], "conf": "high"},
-    {"hero": "Petra",    "gen": 3, "effects": [{"id": "101", "pct": 43.75}], "short": "Chance skill: about 43.75% on average with 3 troop types (37.5% with 2). Only one Petra counts.", "wheel": true, "conf": "low", "unique": true, "petra": true,
-     "note": "Chance skill, rolled per attack: 50% chance of +50% for each troop type's attack. 3 troop types = 43.75% expected, 2 types = 37.5%. Does not stack: only one Petra per rally counts. Id 101 from the joiner calculator; trigger rate conflicts with that calculator (40%)."},
+    {"hero": "Petra",    "gen": 3, "effects": [{"id": "104", "pct": 43.75}], "short": "Chance skill: about 43.75% on average with 3 troop types (37.5% with 2); 39.4% in Bear (off for turn 1 of 10). Only one Petra counts.", "wheel": true, "conf": "medium", "unique": true, "petra": true,
+     "note": "Sloth + Frakinator (video 9v_8VI9S6HM, engineered no-RNG battles): one 50% roll per troop-type attack, checked before damage, so 3 types = 87.5% per turn (43.75% expected), 2 types = 75% (37.5%). Does not stack. Its code is 'damage taken up', shared with Vivian, separate from Chenko's lethality code, and inactive on turn 1 (Bear = 10 rounds, so x0.9 there)."},
     {"hero": "Margot",   "gen": 4, "effects": [{"id": "102", "pct": 25}], "conf": "high"},
-    {"hero": "Vivian",   "gen": 5, "effects": [{"id": "101", "pct": 25}], "short": "Skill group unpublished; left out until tested.", "conf": "low", "exclude": "Skill group unknown: kingshotguides says 101 (a Chenko), kingshotoptimizer says its own code. Mixed Bear results in practice (SE). Left out until a battle test settles it.",
-     "note": "Card (kingshotdata, kingshotoptimizer, 2026-10-30): flat passive, 'All squads' attacks increase enemy damage taken by 25%', no trigger. If it is its own group she lands in every best four; if 101 she ties Chenko."},
+    {"hero": "Vivian",   "gen": 5, "effects": [{"id": "104", "pct": 25}], "short": "Shares Petra's group; stacking untested.", "conf": "medium", "exclude": "Shares Petra's 'damage taken up' code (Sloth). Whether she adds to a Petra in the same rally, or two Vivians add, is untested; mixed Bear results in practice (SE). Left out until tested.",
+     "note": "Card (kingshotdata, kingshotoptimizer, 2026-10-30): flat passive, 'All squads' attacks increase enemy damage taken by 25%', no trigger. Test: no Petra, 3 Chenko + Vivian vs 4 Chenko in Bear."},
     {"hero": "Triton",   "gen": 6, "effects": [{"id": "112", "pct": 25}], "conf": "medium"},
     {"hero": "Ava",      "gen": 7, "effects": [{"id": "301", "pct": 25}], "staple": true, "conf": "medium"},
     {"hero": "Wee & Woo","gen": 7, "effects": [{"id": "102", "pct": 15}, {"id": "101", "pct": 10}], "wheel": true, "conf": "medium"},
@@ -73,7 +74,7 @@
       {"name": "Conviction", "text": "Damage taken -20%", "id": "111", "pct": 20, "conf": "low"},
       {"name": "Exhortation", "text": "Health +25%", "id": "113", "pct": 25, "conf": "low"}]},
     {"hero": "Petra", "class": "cav", "alwaysLead": true, "gen": 3, "wheel": true, "widget": {"weapon": "Fate's Writ", "skill": "Cosmic Eye", "when": "rally", "stat": "Attack", "pct": 15}, "skills": [
-      {"name": "Evil Eye", "text": "50% chance per attack: enemy damage taken +50%", "id": "101", "pct": 43.75, "conf": "low", "petra": true},
+      {"name": "Evil Eye", "text": "50% chance per attack: enemy damage taken +50%", "id": "104", "pct": 43.75, "conf": "medium", "petra": true},
       {"name": "The Favor", "text": "50% chance: attack +50%", "id": "other"},
       {"name": "The Shield", "text": "40% chance: damage taken -50%", "id": "other"}]},
     {"hero": "Jaeger", "class": "arc", "gen": 3, "widget": {"skill": "Hymn to Survival", "when": "defend", "stat": "Health", "pct": 15}, "skills": [
@@ -89,7 +90,7 @@
       {"name": "Subterfuge", "text": "20% chance to dodge", "id": "other"},
       {"name": "Sleight Hand", "text": "Cavalry: chance of an extra attack", "id": "other"}]},
     {"hero": "Rosa", "class": "arc", "gen": 4, "wheel": true, "widget": {"skill": "Perihelion", "when": "rally", "stat": "Lethality", "pct": 15}, "skills": [
-      {"name": "Chaos Gambit", "text": "40% chance: damage dealt +50%", "id": "other"},
+      {"name": "Chaos Gambit", "text": "40% chance: damage dealt +50%", "id": "101", "pct": 20, "conf": "medium", "note": "Coded as lethality and stacks (Sloth + Frakinator Bear test), so it counts at its 20% average, unlike other chance skills."},
       {"name": "Rose of War", "text": "Enemy damage dealt -20%", "id": "201", "pct": 20, "conf": "medium"},
       {"name": "Golden Rhythm", "text": "Archers: attack +30%", "id": "other"}]},
     {"hero": "Long Fei", "class": "inf", "gen": 5, "wheel": true, "widget": {"weapon": "Immortal's Flask", "skill": "Strategic Strike", "when": "defend", "stat": "Attack", "pct": 15}, "skills": [
@@ -101,7 +102,7 @@
       {"name": "Reckless Charge", "text": "20% chance: 100% extra damage", "id": "other"},
       {"name": "Ancestral Guidance", "text": "After 4 cavalry attacks: damage +25%, taken -25%", "id": "other"}]},
     {"hero": "Vivian", "class": "arc", "gen": 5, "widget": {"skill": "Money Driven", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [
-      {"name": "Crouching Tiger", "text": "Enemy damage taken +25%", "id": "101", "pct": 25, "conf": "low"},
+      {"name": "Crouching Tiger", "text": "Enemy damage taken +25%", "id": "104", "pct": 25, "conf": "medium", "note": "When she leads, Focus Fire's 15% overwrites this 25% on its trigger turn (Sloth); not modeled."},
       {"name": "Focus Fire", "text": "Every 4 attacks: extra damage", "id": "other"},
       {"name": "Trap of Greed", "text": "Every 4 attacks: 60% extra damage", "id": "other"}]},
     {"hero": "Triton", "class": "inf", "gen": 6, "widget": {"skill": "Whale Call", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [

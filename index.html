@@ -274,9 +274,9 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
   </details>
 
   <section class="notes" aria-label="Notes and sources">
-    <p><b>Left out on purpose:</b> Vivian. Her card is a flat "enemy damage taken +25%", but nobody has published its skill group: one trusted source says it is the lethality group (then she is another Chenko), another says it is its own group (then she would be a top pick for every lead team). Players also report mixed results with her in Bear. Left out until a battle test settles it. Thrud and Alcar, because their skills only reach some troop types; joiners here are picked to work with any formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
-    <p><b>Petra is included</b> because a rally always sends at least two troop types. Her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). Her buff is either on or off. A second Petra only adds another chance to turn it on; it does not stack, so a regular joiner is usually the better use of that slot. Only one Petra is counted, and she is dropped if the lead team already has her. The troop types picker at the top only changes this Petra number.</p>
-    <p><b>Chance-based skills:</b> joiners are picked for steady results, so chance-based skills are normally left out. Petra is the exception: 87.5% is close to always on, where other chance skills can be as low as 40%. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group.</p>
+    <p><b>Left out on purpose:</b> Vivian. Her card is a flat "enemy damage taken +25%" in Petra's skill group. Whether she adds anything when a Petra is in the same rally, or whether two Vivians add, has not been tested, and players report mixed results with her in Bear. Left out until a battle test settles it (no Petra: 3 Chenko + Vivian against 4 Chenko). Thrud and Alcar, because their skills only reach some troop types; joiners here are picked to work with any formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
+    <p><b>Petra is included</b> because a rally always sends at least two troop types. Her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). Her buff is either on or off. It is its own skill group ("enemy damage taken up"), separate from lethality, so she never crowds Chenko or Yeonwoo. The group does nothing on the first turn of a battle; Bear lasts 10 rounds, so her Bear value is 9/10 of the above (39.4%). Source: Sloth and Frakinator's engineered test battles (2026). A second Petra only adds another chance to turn it on; it does not stack, so a regular joiner is usually the better use of that slot. Only one Petra is counted, and she is dropped if the lead team already has her. The troop types picker at the top only changes this Petra number.</p>
+    <p><b>Chance-based skills:</b> joiners are picked for steady results, so chance-based skills are normally left out. Petra is the exception: 87.5% is close to always on, where other chance skills can be as low as 40%. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group. The one exception is Rosa's Chaos Gambit, which Sloth and Frakinator tested as a stacking lethality skill: it counts at its 20% average.</p>
     <p><b>Charles</b> (enemy lethality down) is assumed to be his own group, separate from Eric's enemy attack down, until a battle test shows otherwise.</p>
     <p><b>Assumed:</b> every joiner's first skill is level 5 (the hero is 4-star or better), so it brings the full % on its card. The game counts the first four joiners whose first skill is level 5; a joiner with a lower-level skill is skipped, not counted at a lower %, and the next joiner in line takes the slot (kingshotguides.com).</p>
     <p><b>Assumed:</b> in PvP, your damage dealt and damage taken count the same (both sides attack every round). Bear is one-sided, so damage output is what matters.</p>
@@ -292,7 +292,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
   var C = window.JoinerCalc, data;
   var state = { leads: ['Diego', 'Ava', 'Luna'], mode: 'pvp', troopTypes: 3, crowdId: '' };
   var CLASSES = ['inf', 'cav', 'arc'];
-  var EXAMPLE = { '101': ['Chenko', 25], '102': ['Amane', 25], '301': ['Ava', 25], '111': ['Howard', 20],
+  var EXAMPLE = { '101': ['Chenko', 25], '102': ['Amane', 25], '301': ['Ava', 25], '104': ['Vivian', 25], '111': ['Howard', 20],
     '112': ['Triton', 25], '113': ['Gordon', 25], '201': ['Fahd', 20], '202': ['Eric', 20], '203?': ['Charles', 20] };
   try { var saved = JSON.parse(localStorage.getItem('jp-state') || 'null'); if (saved && saved.leads) state = Object.assign(state, saved); } catch (e) {}
   if (state.noPetra) { state.without = (state.without || []).concat(['Petra']); delete state.noPetra; }
@@ -410,7 +410,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     }).join('');
     var all = C.pool(data, state.leads, { mode: o.mode, troopTypes: o.troopTypes, maxGen: o.maxGen });
     // Chips grouped by shape: hybrids, straight 25%, 20%, then chance. Damage-side heroes first in each.
-    var SHORT = { '101': 'Leth', '102': 'Atk', '111': 'Dmg taken', '112': 'Def', '113': 'HP', '201': 'Enemy dmg', '202': 'Enemy atk', '203?': 'Enemy leth', '301': 'Enemy def' };
+    var SHORT = { '101': 'Leth', '102': 'Atk', '104': 'Enemy dmg taken', '111': 'Dmg taken', '112': 'Def', '113': 'HP', '201': 'Enemy dmg', '202': 'Enemy atk', '203?': 'Enemy leth', '301': 'Enemy def' };
     var KINDS = [
       ['Hybrids (two stats)', function (j) { return !j.petra && j.effects.length > 1; }],
       ['Straight 25%', function (j) { return !j.petra && j.effects.length === 1 && j.effects[0].pct === 25; }],
@@ -427,7 +427,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
         .sort(function (a, b) { return rank(a[0]) - rank(b[0]) || a[1] - b[1]; }).map(function (p) { return p[0]; });
       if (!list.length) return '';
       return '<div class="label">' + k[0] + '</div><div class="cantgrid">' + list.map(function (j) {
-        var sub = j.petra ? 'Leth, chance *' : j.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct; }).join(' + ');
+        var sub = j.petra ? 'Enemy dmg taken, chance *' : j.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct; }).join(' + ');
         return '<button type="button" class="chip" data-hero="' + esc(j.hero) + '" aria-pressed="' + (o.without.indexOf(j.hero) === -1) + '">' +
           esc(j.hero) + '<span class="sub">' + esc(sub) + '</span></button>';
       }).join('') + '</div>';
@@ -466,7 +466,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
       var r = rowsBy[key].r, effs = r.joiner.effects;
       var w = maxV > 1 ? Math.max(0, (r.value - 1) / (maxV - 1)) * 100 : 0;
       var brings = effs.map(function (e) {
-        var pct = r.joiner.petra ? C.petraPct(state.troopTypes) : e.pct;
+        var pct = C.effectsOf(r.joiner, o, data).filter(function (x) { return x.id === e.id; })[0].pct;
         return '<span class="sw ' + side(e.id) + '"></span>' + esc(groupName(e.id)) + ' +' + (pct % 1 ? pct.toFixed(1) : pct) + '%' +
           ' <span class="hint">(' + (holders(e.id).length ? 'overlaps ' + holders(e.id).map(esc).join(', ') : 'open group') + ')</span>';
       }).join('<br>');
@@ -486,9 +486,9 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
       return;
     }
     var res = likely(true);
-    var SHORT = { '101': 'Lethality', '102': 'Attack', '111': 'Damage taken down', '112': 'Defense', '113': 'Health', '201': 'Enemy damage down', '202': 'Enemy attack down', '203?': 'Enemy lethality down', '301': 'Enemy defense down' };
+    var SHORT = { '101': 'Lethality', '102': 'Attack', '104': 'Enemy damage taken up', '111': 'Damage taken down', '112': 'Defense', '113': 'Health', '201': 'Enemy damage down', '202': 'Enemy attack down', '203?': 'Enemy lethality down', '301': 'Enemy defense down' };
     $('likely').querySelector('tbody').innerHTML = res.rows.map(function (r) {
-      var brings = r.joiner.petra ? 'Lethality, chance (one only)' : r.joiner.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct + '%'; }).join(' + ');
+      var brings = r.joiner.petra ? 'Enemy damage taken up, chance (one only)' : r.joiner.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct + '%'; }).join(' + ');
       var pct = Math.round(r.score * 100), tier = pct >= 50 ? 'High' : pct >= 20 ? 'Medium' : pct > 0 ? 'Low' : 'Never';
       return '<tr><td><span class="sw ' + side(r.joiner.effects[0].id) + '"></span>' + esc(brings) + '</td><td>' + r.heroes.map(esc).join(', ') +
         '</td><td class="num"><b>' + tier + '</b> <span class="hint">' + pct + '%</span></td></tr>';

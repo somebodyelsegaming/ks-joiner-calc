@@ -232,6 +232,19 @@ test('newest generation follows the gen picker: Gen 7 server treats Triton (Gen 
   }
 });
 
+test('Petra is her own group (Sloth + Frakinator): she never crowds lethality, and Bear counts 9 rounds of 10', () => {
+  const t = ['Petra', 'Chenko'].map(h => data.joiners.find(j => j.hero === h));
+  const rows = C.breakdown(data, lead, t, pvp3);
+  assert.ok(near(rows.find(r => r.joiner.hero === 'Petra').value, 1.4375));   // open group, full 43.75%
+  assert.ok(near(rows.find(r => r.joiner.hero === 'Chenko').value, 1.1667));  // same as alone: 101 still at 50%
+  assert.deepStrictEqual(C.effectsOf(t[0], { mode: 'bear', troopTypes: 3 }, data), [{ id: '104', pct: 39.375 }]);
+  assert.deepStrictEqual(C.effectsOf(t[0], pvp3, data), [{ id: '104', pct: 43.75 }]);
+});
+
+test("Rosa's Chaos Gambit counts as 20% lethality when she leads (tested stacking lethality code)", () => {
+  assert.strictEqual(C.leaderGroups(data, ['Amadeus', 'Petra', 'Rosa'], pvp3)['101'], 45);
+});
+
 test('page stays single column (SE, 2026-10-25)', () => {
   const html = require('fs').readFileSync(require('path').join(__dirname, '../index.html'), 'utf8');
   assert.ok(!/class="layout"|class="col"/.test(html));

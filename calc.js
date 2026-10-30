@@ -8,10 +8,15 @@
     return 50 * (1 - Math.pow(0.5, troopTypes));
   }
 
-  function effectsOf(item, opts) {
+  var BEAR_ROUNDS = 10;
+
+  // A group marked inactiveFirstTurn (damage taken up) does nothing on turn 1, so in Bear it works 9 rounds of 10.
+  function effectsOf(item, opts, data) {
     var list = item.effects || (item.id && item.id !== 'other' ? [{ id: item.id, pct: item.pct }] : []);
     return list.map(function (e) {
-      return { id: e.id, pct: item.petra ? petraPct(opts.troopTypes) : e.pct };
+      var pct = item.petra ? petraPct(opts.troopTypes) : e.pct;
+      if (data && data.groups[e.id] && data.groups[e.id].inactiveFirstTurn && opts.mode === 'bear') pct *= (BEAR_ROUNDS - 1) / BEAR_ROUNDS;
+      return { id: e.id, pct: pct };
     });
   }
 
@@ -27,7 +32,7 @@
       var leader = data.leaders.find(function (l) { return l.hero === name; });
       if (!leader) return;
       leader.skills.forEach(function (s) {
-        effectsOf(s, opts).forEach(function (e) {
+        effectsOf(s, opts, data).forEach(function (e) {
           if (keep(data, e.id, opts)) g[e.id] = (g[e.id] || 0) + e.pct;
         });
       });
@@ -37,7 +42,7 @@
 
   function addJoiner(data, g, joiner, opts) {
     var out = Object.assign({}, g);
-    effectsOf(joiner, opts).forEach(function (e) {
+    effectsOf(joiner, opts, data).forEach(function (e) {
       if (keep(data, e.id, opts)) out[e.id] = (out[e.id] || 0) + e.pct;
     });
     return out;
@@ -153,7 +158,7 @@
         if (v > bestV) { bestV = v; best = i; }
       });
       var j = left.splice(best, 1)[0];
-      var ids = effectsOf(j, opts).filter(function (e) { return keep(data, e.id, opts); }).map(function (e) {
+      var ids = effectsOf(j, opts, data).filter(function (e) { return keep(data, e.id, opts); }).map(function (e) {
         count[e.id] = (count[e.id] || 0) + 1;
         var w = holders[e.id].slice(); holders[e.id].push(j.hero);
         return { id: e.id, pct: e.pct, before: g[e.id] || 0, copy: count[e.id], overlaps: w, ofCard: ofCard(g[e.id] || 0, e.pct) };
@@ -171,7 +176,7 @@
       var leader = data.leaders.find(function (l) { return l.hero === name; });
       if (!leader) return;
       leader.skills.forEach(function (s) {
-        effectsOf(s, opts).forEach(function (e) {
+        effectsOf(s, opts, data).forEach(function (e) {
           if (e.id === id && keep(data, id, opts)) out.push({ hero: name, skill: s.name, pct: e.pct, conf: s.conf });
         });
       });
@@ -275,7 +280,7 @@
     return g;
   }
 
-  var api = { likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
+  var api = { effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
     teamValue: teamValue, bestLineups: bestLineups, singlePicks: singlePicks,
     breakdown: breakdown, crowding: crowding, leaderContrib: leaderContrib };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
