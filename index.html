@@ -227,9 +227,11 @@ Your stats are already fixed, so this page sets them aside.
     <div class="inner">
       <p class="hint">Both teams use the lead team, battle type and troop types picked above. Change any slot to match what you run; Reset goes back to that team's default.</p>
       <div class="cmp-grid" id="cmp-grid"></div>
-      <p class="hint"><b>What the numbers mean:</b> Total = Offense × Defense. Offense is the skills that help you hurt the enemy, including weakening its defense (Ava). Defense is the skills that protect your troops, including weakening its damage (Fahd).</p>
+      <p class="hint" id="cmp-why"><b>Why offense and defense both count:</b> Defense keeps your troops alive longer, and troops that live longer keep dealing damage. A glass cannon (high offense, low defense) hits harder but dies sooner. It can win a short fight, but in a long one it may run out of troops first.</p>
+      <p class="hint"><b>What the numbers mean:</b> Total = Offense × Defense. Offense is the skills that help you hurt the enemy, including weakening its defense (Ava). Defense is the skills that protect your troops, including weakening its damage (Fahd). Bear only counts offense, so there Total and Offense are the same.</p>
       <p class="hint"><b>How "% higher" is worked out:</b> higher number ÷ lower number, minus 1. Example, 1.605 vs 1.000: 1.605 ÷ 1.000 − 1 = 60.5% higher. Measured the other way, the same gap is 37.7% lower (1 − 1.000 ÷ 1.605), because it is divided by the bigger number. This section always shows % higher, worked out before rounding, so dividing the rounded numbers shown can differ slightly.</p>
-      <p class="hint">Each slot's gain is counted on top of the slots above it, so reordering changes the slot gains but not the total. Any hero released by your generation can be picked here, even if it's off in your joiner pool; heroes left out of the page (see Notes and assumptions) are not listed. No joiner leaves a slot empty. A second Petra only adds more chances to trigger, so she adds far less than the first.</p>
+      <p class="hint"><b>Slots and hero lists:</b> Each slot's gain is counted on top of the slots above it, so reordering changes the slot gains but not the total. Any hero released by your generation can be picked here, even if it's off in your joiner pool; heroes left out of the page (see Notes and assumptions) are not listed. No joiner leaves a slot empty. A second Petra only adds more chances to trigger, so she adds far less than the first.</p>
+      <p class="hint" id="cmp-test"></p>
     </div>
   </details>
 
@@ -541,6 +543,10 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
         (showDefense ? '<span>Defense</span><span class="val">' + x(t.totals.taken) + '</span>' : '') + '</div>' +
         slots + '<button type="button" class="cmp-reset" data-cmp-reset="' + t.key + '"' + (t.isDefault ? ' disabled' : '') + '>Reset ' + t.name + '</button></div>';
     }).join('') + compareKey(teams[0].totals, teams[1].totals, showDefense);
+    $('cmp-why').hidden = !showDefense;
+    $('cmp-test').innerHTML = '<b>To test it yourself:</b> ' + (showDefense
+      ? 'Keep the lead team, troops and opponent the same, and compare both sides of the report.'
+      : 'Keep the lead team and troops the same, and compare the damage.');
     if (active) { var again = $('cmp-grid').querySelector('[data-cmp="' + active + '"]'); if (again) again.focus(); }
   }
 
@@ -555,11 +561,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
       ? '<p>Team ' + who(offense) + ' has the higher offense; Team ' + who(total) + ' has the higher total.</p>' : '';
     return '<div class="cmp-team cmp-key"><h3>Compare</h3><div class="cmp-lines">' + line('Total', A.value, B.value) +
       (showDefense ? line('Offense', A.dealt, B.dealt) + line('Defense', A.taken, B.taken) : '') + '</div>' + split +
-      '<p>This compares skills on paper, not battle results.</p>' +
-      (showDefense
-        ? '<p class="hint">A rough math test of a fight, not checked against real battles, suggests the higher total does better in a long fight and the higher offense can do better in a short one.</p>' +
-          '<p class="hint">To test it yourself, keep the lead team, troops and opponent the same, and compare both sides of the report.</p>'
-        : '<p class="hint">Bear only counts offense, so the total and offense are the same. To test it yourself, keep the lead team and troops the same and compare the damage.</p>') + '</div>';
+      '<p>This compares skills on paper, not battle results.</p></div>';
   }
 
   function renderLikely() {
