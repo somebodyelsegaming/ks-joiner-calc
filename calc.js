@@ -280,38 +280,50 @@
     return g;
   }
 
-  // Names to joiners for a compare team. A name that can't be used here (too new, not a joiner,
-  // a second Petra, Petra already leading) takes the default team's hero for that slot.
-  function compareTeam(data, leaderNames, names, fallback, opts) {
-    var allowed = pool(data, leaderNames, { maxGen: opts.maxGen });
+  // Every hero a compare team can pick: the joiner pool chips don't apply, the generation picker does.
+  function compareHeroes(data, opts) {
+    return data.joiners.filter(function (j) { return !j.exclude && !(opts.maxGen && j.gen > opts.maxGen); });
+  }
+
+  // Names to joiners for a compare team. A name that can't be used here (too new, not a joiner)
+  // takes the default team's hero for that slot.
+  function compareTeam(data, names, fallback, opts) {
+    var allowed = compareHeroes(data, opts);
     var find = function (n) { return allowed.find(function (j) { return j.hero === n; }); };
-    var out = [];
-    var ok = function (j) { return j && !(j.unique && out.indexOf(j) !== -1); };
-    fallback.forEach(function (f, i) {
-      var j = find((names || fallback)[i]);
-      if (!ok(j)) j = find(f);
-      if (!ok(j)) j = allowed.filter(function (c) { return !c.unique; })[0];
-      out.push(j);
-    });
-    return out;
+    return fallback.map(function (f, i) { return find((names || fallback)[i]) || find(f) || allowed[0]; });
+  }
+
+  // Group totals where each Petra after the first only adds more 50% checks (3 types: 87.5% to 98.4%),
+  // so her average goes 43.75% to 49.2%. A Petra on the lead team counts as the first one.
+  function compareGroups(data, names, team, opts) {
+    var n = names.filter(function (name) {
+      var l = data.leaders.find(function (h) { return h.hero === name; });
+      return l && l.skills.some(function (sk) { return sk.petra; });
+    }).length;
+    return team.reduce(function (g, j) {
+      if (!j.petra) return addJoiner(data, g, j, opts);
+      n++;
+      var pct = petraPct(opts.troopTypes * n) - petraPct(opts.troopTypes * (n - 1));
+      return addJoiner(data, g, { effects: [{ id: j.effects[0].id, pct: pct }] }, opts);
+    }, leaderGroups(data, names, opts));
   }
 
   // Totals for one compare team. `value` is the whole boost; `dealt` and `taken` split it by side.
   // `rows` keeps the team's slot order: each joiner counted on top of the slots above it.
   function compareTotals(data, leaderNames, team, opts) {
-    var before = leaderGroups(data, leaderNames, opts), after = teamGroups(data, leaderNames, team, opts);
+    var before = leaderGroups(data, leaderNames, opts), after = compareGroups(data, leaderNames, team, opts);
     var bySide = function (s) {
       return Object.keys(after).filter(function (id) { return data.groups[id].side === s; }).reduce(function (p, id) {
         return p * (1 + after[id] / 100) / (1 + (before[id] || 0) / 100);
       }, 1);
     };
     var rows = team.map(function (j, i) {
-      return { joiner: j, value: product(teamGroups(data, leaderNames, team.slice(0, i + 1), opts)) / product(teamGroups(data, leaderNames, team.slice(0, i), opts)) };
+      return { joiner: j, value: product(compareGroups(data, leaderNames, team.slice(0, i + 1), opts)) / product(compareGroups(data, leaderNames, team.slice(0, i), opts)) };
     });
     return { value: product(after) / product(before), dealt: bySide('off'), taken: bySide('def'), rows: rows };
   }
 
-  var api = { compareTeam: compareTeam, compareTotals: compareTotals, effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
+  var api = { compareHeroes: compareHeroes, compareTeam: compareTeam, compareTotals: compareTotals, effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
     teamValue: teamValue, bestLineups: bestLineups, singlePicks: singlePicks,
     breakdown: breakdown, crowding: crowding, leaderContrib: leaderContrib };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

@@ -247,7 +247,7 @@ test("Rosa's Chaos Gambit counts as 20% lethality when she leads (tested stackin
 
 test('compare: Diego/Ava/Luna best four against 2 Chenko + 2 Amane, total and damage split', () => {
   const o = { ...pvp3, maxGen: 8 };
-  const totals = n => C.compareTotals(data, lead, C.compareTeam(data, lead, n, n, o), o);
+  const totals = n => C.compareTotals(data, lead, C.compareTeam(data, n, n, o), o);
   const a = totals(['Petra', 'Saul', 'Saul', 'Hilde']), b = totals(['Chenko', 'Chenko', 'Amane', 'Amane']);
   assert.ok(near(a.value, 2.584), a.value);
   assert.ok(near(a.dealt * a.taken, a.value));
@@ -258,20 +258,43 @@ test('compare: Diego/Ava/Luna best four against 2 Chenko + 2 Amane, total and da
 
 test('compare: Bear counts offense only, so a defense joiner adds nothing', () => {
   const o = { mode: 'bear', troopTypes: 3, maxGen: 8 };
-  const t = C.compareTeam(data, lead, ['Gordon', 'Chenko', 'Chenko', 'Amane'], ['Chenko', 'Chenko', 'Amane', 'Amane'], o);
+  const t = C.compareTeam(data, ['Gordon', 'Chenko', 'Chenko', 'Amane'], ['Chenko', 'Chenko', 'Amane', 'Amane'], o);
   const r = C.compareTotals(data, lead, t, o);
   assert.strictEqual(r.rows[0].value, 1);
   assert.strictEqual(r.taken, 1);
 });
 
 test('compare: names that cannot be used fall back to the default slot', () => {
-  const o = { ...pvp3, maxGen: 8 };
   const names = t => t.map(j => j.hero);
   const def = ['Chenko', 'Chenko', 'Amane', 'Amane'];
-  assert.deepStrictEqual(names(C.compareTeam(data, lead, ['Petra', 'Petra', 'Amane', 'Amane'], def, o)), ['Petra', 'Chenko', 'Amane', 'Amane']);
-  assert.deepStrictEqual(names(C.compareTeam(data, ['Petra', 'Ava', 'Luna'], ['Petra', 'Saul', 'Saul', 'Saul'], def, o)), ['Chenko', 'Saul', 'Saul', 'Saul']);
-  assert.deepStrictEqual(names(C.compareTeam(data, lead, ['Luna', 'Vivian', 'Saul', 'Saul'], def, { ...pvp3, maxGen: 7 })), ['Chenko', 'Chenko', 'Saul', 'Saul']);
-  assert.deepStrictEqual(names(C.compareTeam(data, lead, null, def, o)), def);
+  assert.deepStrictEqual(names(C.compareTeam(data, ['Luna', 'Vivian', 'Saul', 'Saul'], def, { ...pvp3, maxGen: 7 })), ['Chenko', 'Chenko', 'Saul', 'Saul']);
+  assert.deepStrictEqual(names(C.compareTeam(data, null, def, { ...pvp3, maxGen: 8 })), def);
+});
+
+test('compare: a second Petra adds only her extra checks, 43.75% to 49.2% with 3 troop types', () => {
+  const by = n => data.joiners.find(j => j.hero === n);
+  const o = { ...pvp3, maxGen: 8 };
+  const two = C.compareTotals(data, lead, [by('Petra'), by('Petra')], o);
+  assert.ok(near(two.rows[0].value, 1.4375));
+  assert.ok(near(two.rows[1].value, (1 + 0.4921875) / 1.4375), two.rows[1].value);
+  const bear = C.compareTotals(data, lead, [by('Petra'), by('Petra')], { mode: 'bear', troopTypes: 3, maxGen: 8 });
+  assert.ok(near(bear.value, 1 + 0.4921875 * 0.9), bear.value);
+  const twoTypes = C.compareTotals(data, lead, [by('Petra'), by('Petra')], { mode: 'pvp', troopTypes: 2, maxGen: 8 });
+  assert.ok(near(twoTypes.value, 1 + 0.46875), twoTypes.value);   // 2 types: 75% to 93.75%
+});
+
+test('compare: Petra on the lead team counts as the first Petra', () => {
+  const L = ['Amadeus', 'Petra', 'Rosa'];
+  const r = C.compareTotals(data, L, [data.joiners.find(j => j.hero === 'Petra')], { ...pvp3, maxGen: 8 });
+  assert.ok(near(r.value, (1 + 0.4921875) / 1.4375), r.value);
+});
+
+test('compare: Ava (enemy defense down) lands in damage dealt, Fahd (enemy damage down) in damage taken', () => {
+  const by = n => data.joiners.find(j => j.hero === n);
+  const o = { ...pvp3, maxGen: 8 };
+  const ava = C.compareTotals(data, lead, [by('Ava')], o), fahd = C.compareTotals(data, lead, [by('Fahd')], o);
+  assert.ok(near(ava.dealt, 1.2) && ava.taken === 1, JSON.stringify(ava));   // lead Ava already holds 25%: 1.50 / 1.25
+  assert.ok(near(fahd.taken, 1.2) && fahd.dealt === 1, JSON.stringify(fahd));
 });
 
 test('page stays single column (SE, 2026-10-25)', () => {
