@@ -171,7 +171,7 @@ Your stats are already fixed, so this page sets them aside.
     <details id="group-totals">
       <summary>How full each group gets: lead team alone, then with best 4</summary>
       <div class="inner">
-    <p class="hint">How much each skill group is boosted: first by your three lead heroes alone, then after the best four joiners are added. Only groups that end up with something in them are listed. The bottom row multiplies every group together: your combined boost from the skill groups joiners can share. Lead chance skills other than Petra's, and widgets, are not counted.</p>
+    <p class="hint">How much each skill group is boosted: first by your three lead heroes alone, then after the best four joiners are added. Only groups that end up with something in them are listed. The bottom row multiplies every group together: your combined boost from the skill groups joiners can share. Most lead chance skills, and widgets, are not counted.</p>
         <div class="scroll"><table id="fill"><thead><tr><th>Skill group</th><th>Lead team skills in it</th><th class="num">Lead team total</th><th class="num">With best 4 joiners</th></tr></thead><tbody></tbody><tfoot></tfoot></table></div>
       </div>
     </details>
@@ -273,12 +273,18 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     </div>
   </details>
 
-  <section class="notes" aria-label="Notes and sources">
+  <details id="notes-sec">
+    <summary>Notes and assumptions</summary>
+    <div class="inner notes">
     <p><b>Left out on purpose:</b> Vivian. Her card is a flat "enemy damage taken +25%" in Petra's skill group. Whether she adds anything when a Petra is in the same rally, or whether two Vivians add, has not been tested, and players report mixed results with her in Bear. Left out until a battle test settles it. Thrud and Alcar, because their skills only reach some troop types; joiners here are picked to work with any formation. Amadeus, because Chenko and Yeonwoo give the same 25% lethality and he is usually kept as a lead hero.</p>
     <p><b>Petra:</b> her skill makes one 50% check per troop type; if any check succeeds, the +50% applies. With 3 types she triggers 87.5% of the time (about 43.75% on average), with 2 types 75% (about 37.5%). It is its own skill group ("enemy damage taken up"), separate from lethality, so she never crowds Chenko or Yeonwoo. The group does nothing on the first turn of a battle; Bear lasts 10 rounds, so her Bear value is 9/10 of the above (39.4% with 3 types). Source: Sloth and Frakinator's engineered test battles (2026). Only one Petra counts, and she is dropped if the lead team already has her. The troop types picker at the top only changes this Petra number.</p>
-    <p><b>Consistent results:</b> joiners are picked for consistent, repeatable results, so chance-based skills are normally left out. Petra is the exception: 87.5% is close to always on, where other chance skills can be as low as 40%. Chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group. The one exception is Rosa's Chaos Gambit, which Sloth and Frakinator tested as a stacking lethality skill: it counts at its 20% average.</p>
+    <p><b>Consistent results:</b> joiners are picked for consistent, repeatable results, so chance-based skills are normally left out. Petra is the exception: 87.5% is close to always on, where other chance skills can be as low as 40%. Most chance and turn-based lead skills (for example "40% chance: damage dealt +50%") are listed but not counted, because nobody has published their skill group.</p>
     <p><b>Which joiners count:</b> four joiner skills, highest level first: level 5 skills, then the next highest level if there aren't four. This page assumes all four are level 5 (the hero is 4-star or better), so each brings the full % on its card.</p>
     <p><b>Assumed:</b> in PvP, offense and defense are valued equally, because both are in play every battle.</p>
+    </div>
+  </details>
+
+  <section class="notes" aria-label="Sources and dates">
     <p><b>Sources referenced:</b> Frakinator (frakinator.streamlit.app), Sloth / KingshotOptimizer, Daryl / kingshotguides.com; then kingshotjoinercalculator.netlify.app, kingshotcalculator.com and kingshotdata.com for skill wording. Gen 9 heroes are not in yet.</p>
     <p id="updated"></p>
   </section>
