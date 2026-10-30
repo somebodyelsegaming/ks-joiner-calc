@@ -271,6 +271,18 @@ test('compare: names that cannot be used fall back to the default slot', () => {
   assert.deepStrictEqual(names(C.compareTeam(data, null, def, { ...pvp3, maxGen: 8 })), def);
 });
 
+test('compare: % higher is measured up from the lower number, before rounding', () => {
+  const o = { ...pvp3, maxGen: 8 };
+  const totals = n => C.compareTotals(data, lead, C.compareTeam(data, n, n, o), o);
+  const a = totals(['Petra', 'Saul', 'Saul', 'Hilde']), b = totals(['Chenko', 'Chenko', 'Amane', 'Amane']);
+  const pct = (x, y) => C.pctHigher(x, y).pct.toFixed(1);
+  assert.deepStrictEqual([C.pctHigher(a.value, b.value).higher, pct(a.value, b.value)], ['a', '38.4']);
+  assert.deepStrictEqual([C.pctHigher(a.dealt, b.dealt).higher, pct(a.dealt, b.dealt)], ['b', '15.9']);
+  assert.deepStrictEqual([C.pctHigher(a.taken, b.taken).higher, pct(a.taken, b.taken)], ['a', '60.5']);
+  assert.strictEqual(((1 - b.taken / a.taken) * 100).toFixed(1), '37.7');   // the footnote's same gap, measured the other way
+  assert.strictEqual(C.pctHigher(1.5, 1.5), null);
+});
+
 test('compare: No joiner adds nothing, and an empty team equals the lead team alone', () => {
   const o = { ...pvp3, maxGen: 8 };
   const def = ['Chenko', 'Chenko', 'Amane', 'Amane'];

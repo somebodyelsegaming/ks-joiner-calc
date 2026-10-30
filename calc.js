@@ -311,6 +311,12 @@
     }, leaderGroups(data, names, opts));
   }
 
+  // Which of two numbers is higher and by what %, always measured up from the lower one.
+  function pctHigher(a, b) {
+    if (Math.abs(a - b) < 1e-9) return null;
+    return { higher: a > b ? 'a' : 'b', pct: (Math.max(a, b) / Math.min(a, b) - 1) * 100 };
+  }
+
   // Totals for one compare team. `value` is the whole boost; `dealt` and `taken` split it by side.
   // `rows` keeps the team's slot order: each joiner counted on top of the slots above it.
   function compareTotals(data, leaderNames, team, opts) {
@@ -326,7 +332,7 @@
     return { value: product(after) / product(before), dealt: bySide('off'), taken: bySide('def'), rows: rows };
   }
 
-  var api = { NO_JOINER: NO_JOINER, compareHeroes: compareHeroes, compareTeam: compareTeam, compareTotals: compareTotals, effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
+  var api = { pctHigher: pctHigher, NO_JOINER: NO_JOINER, compareHeroes: compareHeroes, compareTeam: compareTeam, compareTotals: compareTotals, effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
     teamValue: teamValue, bestLineups: bestLineups, singlePicks: singlePicks,
     breakdown: breakdown, crowding: crowding, leaderContrib: leaderContrib };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

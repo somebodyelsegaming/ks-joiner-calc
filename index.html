@@ -90,7 +90,8 @@ details > summary::-webkit-details-marker { display: none; }
 details > summary::after { content: "+"; color: var(--accent); }
 details[open] > summary::after { content: "−"; }
 details .inner { padding: 0 18px 18px; display: grid; gap: 12px; }
-.cmp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cmp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 899px) { .cmp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cmp-key { grid-column: 1 / -1; } }
 @media (max-width: 640px) { .cmp-grid { grid-template-columns: 1fr; } }
 .cmp-team { border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
 .cmp-team h3 { font-family: var(--display); font-size: 1.15rem; margin: 0; }
@@ -99,7 +100,9 @@ details .inner { padding: 0 18px 18px; display: grid; gap: 12px; }
 .cmp-slot .val { text-align: right; }
 .cmp-reset { font: inherit; font-weight: 600; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); padding: 9px 16px; min-height: 44px; cursor: pointer; justify-self: start; }
 .cmp-reset:disabled { color: var(--muted); cursor: default; opacity: .6; }
-.cmp-say { font-weight: 600; margin: 0; }
+.cmp-key { background: var(--accent-soft); border-color: var(--accent-soft); }
+.cmp-key p { margin: 0; }
+.cmp-lines { display: grid; gap: 4px; font-weight: 600; }
 pre { white-space: pre; overflow-x: auto; }
 
 pre { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; font-size: .9rem; line-height: 1.45; margin: 0; }
@@ -222,11 +225,10 @@ Your stats are already fixed, so this page sets them aside.
   <details id="compare-sec">
     <summary>Compare two joiner teams</summary>
     <div class="inner">
-      <p class="hint">Both teams use the lead team, battle type and troop types picked above. Change any slot to match what you run; Reset goes back to that team's default. These are the same skill estimates as the best four, not a battle result.</p>
+      <p class="hint">Both teams use the lead team, battle type and troop types picked above. Change any slot to match what you run; Reset goes back to that team's default.</p>
       <div class="cmp-grid" id="cmp-grid"></div>
-      <p class="cmp-say" id="cmp-say"></p>
-      <p class="hint" id="cmp-test"></p>
-      <p class="hint">Skills that weaken the enemy count where they land: Ava's enemy defense down is in damage you deal, and Fahd's enemy damage down is in damage you take.</p>
+      <p class="hint"><b>What the numbers mean:</b> Total = Offense × Defense. Offense is the skills that help you hurt the enemy, including weakening its defense (Ava). Defense is the skills that protect your troops, including weakening its damage (Fahd).</p>
+      <p class="hint"><b>How "% higher" is worked out:</b> higher number ÷ lower number, minus 1. Example, 1.605 vs 1.000: 1.605 ÷ 1.000 − 1 = 60.5% higher. Measured the other way, the same gap is 37.7% lower (1 − 1.000 ÷ 1.605), because it is divided by the bigger number. This section always shows % higher, worked out before rounding, so dividing the rounded numbers shown can differ slightly.</p>
       <p class="hint">Each slot's gain is counted on top of the slots above it, so reordering changes the slot gains but not the total. Any hero released by your generation can be picked here, even if it's off in your joiner pool; heroes left out of the page (see Notes and assumptions) are not listed. No joiner leaves a slot empty. A second Petra only adds more chances to trigger, so she adds far less than the first.</p>
     </div>
   </details>
@@ -517,7 +519,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
       { key: 'a', name: 'Team A', fallback: bestNames },
       { key: 'b', name: 'Team B', fallback: CMP_B }];
     var allowed = [C.NO_JOINER].concat(C.compareHeroes(data, o));
-    var showTaken = o.mode !== 'bear';
+    var showDefense = o.mode !== 'bear';
     var active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.cmp : null;
     teams.forEach(function (t) {
       t.team = C.compareTeam(data, state.compare[t.key], t.fallback, o);
@@ -534,25 +536,30 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
         return '<div class="cmp-slot"><select aria-label="' + t.name + ' joiner ' + (i + 1) + '" data-cmp="' + t.key + i + '">' + opt + '</select><span class="val">' + pctAdded(t.totals.rows[i].value) + '</span></div>';
       }).join('');
       return '<div class="cmp-team"><h3>' + t.name + '</h3>' +
-        '<div><span class="big">' + x(t.totals.value) + '</span> <span class="hint">on top of the lead team</span></div>' +
-        '<div class="cmp-split"><span>Damage you deal</span><span class="val">' + x(t.totals.dealt) + '</span>' +
-        (showTaken ? '<span>Damage you take</span><span class="val">÷' + t.totals.taken.toFixed(3) + '</span>' : '') + '</div>' +
+        '<div><span class="big">' + x(t.totals.value) + '</span> <span class="hint">total, on top of the lead team</span></div>' +
+        '<div class="cmp-split"><span>Offense</span><span class="val">' + x(t.totals.dealt) + '</span>' +
+        (showDefense ? '<span>Defense</span><span class="val">' + x(t.totals.taken) + '</span>' : '') + '</div>' +
         slots + '<button type="button" class="cmp-reset" data-cmp-reset="' + t.key + '"' + (t.isDefault ? ' disabled' : '') + '>Reset ' + t.name + '</button></div>';
-    }).join('');
+    }).join('') + compareKey(teams[0].totals, teams[1].totals, showDefense);
     if (active) { var again = $('cmp-grid').querySelector('[data-cmp="' + active + '"]'); if (again) again.focus(); }
-    var A = teams[0].totals, B = teams[1].totals;
-    var higher = function (label, a, b) {
-      if (Math.abs(a - b) < 1e-9) return label + ': same.';
-      return label + ': ' + (a > b ? 'Team A' : 'Team B') + ' is ' + ((Math.max(a, b) / Math.min(a, b) - 1) * 100).toFixed(1) + '% higher.';
+  }
+
+  function compareKey(A, B, showDefense) {
+    var who = function (d) { return d.higher === 'a' ? 'A' : 'B'; };
+    var line = function (label, a, b) {
+      var d = C.pctHigher(a, b);
+      return '<span>' + label + ': ' + (d ? who(d) + ' is ' + d.pct.toFixed(1) + '% higher' : 'same') + '</span>';
     };
-    var takenLine = Math.abs(A.taken - B.taken) < 1e-9 ? 'Damage you take: same.'
-      : 'Damage you take: ' + (A.taken > B.taken ? 'Team A' : 'Team B') + ' takes ' + ((1 - Math.min(A.taken, B.taken) / Math.max(A.taken, B.taken)) * 100).toFixed(1) + '% less.';
-    $('cmp-say').textContent = showTaken
-      ? [higher('Total', A.value, B.value), higher('Damage you deal', A.dealt, B.dealt), takenLine].join(' ')
-      : higher('Damage you deal', A.dealt, B.dealt);
-    $('cmp-test').textContent = showTaken
-      ? 'The total is damage you deal × how much less you take, because troops that live longer keep dealing damage. When a fight runs until one side is gone, the total is the number to compare. In a short fight, the team with more damage can come out ahead. If you test this in battle, keep the lead team, troops and opponent the same and compare both sides of the report.'
-      : 'If you test this in Bear, keep the lead team and troops the same and compare the damage.';
+    var total = C.pctHigher(A.value, B.value), offense = C.pctHigher(A.dealt, B.dealt);
+    var split = showDefense && total && offense && total.higher !== offense.higher
+      ? '<p>Team ' + who(offense) + ' has the higher offense; Team ' + who(total) + ' has the higher total.</p>' : '';
+    return '<div class="cmp-team cmp-key"><h3>Compare</h3><div class="cmp-lines">' + line('Total', A.value, B.value) +
+      (showDefense ? line('Offense', A.dealt, B.dealt) + line('Defense', A.taken, B.taken) : '') + '</div>' + split +
+      '<p>This compares skills on paper, not battle results.</p>' +
+      (showDefense
+        ? '<p class="hint">A rough math test of a fight, not checked against real battles, suggests the higher total does better in a long fight and the higher offense can do better in a short one.</p>' +
+          '<p class="hint">To test it yourself, keep the lead team, troops and opponent the same, and compare both sides of the report.</p>'
+        : '<p class="hint">Bear only counts offense, so the total and offense are the same. To test it yourself, keep the lead team and troops the same and compare the damage.</p>') + '</div>';
   }
 
   function renderLikely() {
