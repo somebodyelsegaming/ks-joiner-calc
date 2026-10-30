@@ -574,7 +574,9 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
       if (i === -1) w.push(h); else w.splice(i, 1);
       state.without = w; save(); render();
     });
-    $('updated').textContent = 'Hero data updated ' + data.updated + '.';
+    // Page date comes from the host's Last-Modified header, so each deploy updates it with no upkeep.
+    var built = new Date(document.lastModified), two = function (n) { return (n < 10 ? '0' : '') + n; };
+    $('updated').textContent = 'Hero data updated ' + data.updated + '. Page updated ' + built.getFullYear() + '-' + two(built.getMonth() + 1) + '-' + two(built.getDate()) + '.';
     render();
   }
 

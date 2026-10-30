@@ -1,6 +1,6 @@
 {
   "schema": 3,
-  "updated": "2026-10-25",
+  "updated": "2026-10-30",
   "notes": "Joiner skill = the hero's first expedition skill only. Same id adds, different ids multiply. side: off = damage you deal, def = damage you take. id 'other' = a leader skill that does not share a group with any joiner, so it never changes which joiners are best. wheel = the Hero Roulette hero for its generation (one per gen; most players are told to get it). staple = a joiner most players were told to build early, so it never counts as new. alwaysLead = a common lead hero in any generation window (counted in Likely wanted even when older). widget = the exclusive weapon Expedition skill at max level (kingshotdata.com, 2026-10-25); when: rally = fires only when this hero leads a rally, defend = fires only when defending or garrisoning. Solo marches never get widget bonuses. conf: high = 2+ trusted sources agree; medium = one source; low = matched by hand from skill wording.",
   "groups": {
     "101": {"label": "Lethality up / damage up", "side": "off"},
