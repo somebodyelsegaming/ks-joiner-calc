@@ -194,7 +194,9 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 - [x] v12 per SE: rule table replaced by copies 0-7 table for 25% and 20% skills (numbers recomputed).
 - [x] Shortlist tool: `node tools/shortlist.js [minGen]` counts how often each joiner lands in the best 4 across every lead team (576 teams Gen 1+, 27 teams Gen 6+). Purpose: a short general PvP preset list, since players only have a few saved formations (SE 2026-10-25).
 - [x] (Done 2026-10-25 as the Likely wanted section) Open question (SE): weight joiners by how common they are. The AI assistant proposal: an "Epic joiners only" toggle (Chenko, Yeonwoo, Amane, Gordon, Howard, Quinn, Fahd, Eric) instead of weighting the math.
-- [ ] Wording pass on the live page (SE expects more wording to clarify and refine). Next session starts here.
+- [ ] Wording pass on the live page (SE expects more wording to clarify and refine).
+- [ ] Decide: knock turn 1 off Petra in PvP too (x0.9, as in Bear), or leave her at full. Unanswered 2026-10-30; she is at full in PvP now.
+- [ ] Gen 9 data (about 6 weeks out, SE 2026-10-30): add leads and joiners to heroes.json, rerun `node tools/build_likely.js`, `node --test tests/`. Next session starts here or at the Vivian test.
 - [ ] The private claude.ai artifact (v60) is stale since the 2026-10-26 public release; the GitHub page is the one to share.
 - [ ] REVIEW (SE): look over the live page (https://somebodyelsegaming.github.io/ks-joiner-calc/) on the iPad; ISC-1, 3, 5, 6, 7, 8 stay open until then.
 - [ ] Leader data for Gen 1-8 came from kingshotdata.com wording; chance and turn-based leader skills are left out of the groups (id 'other') until someone publishes their ids.
