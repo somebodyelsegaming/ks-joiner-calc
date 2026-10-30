@@ -171,7 +171,7 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 - Widgets never apply to solo marches (SE, 2026-10-25). Rally widgets need this hero leading a rally; defender widgets need defending or garrisoning.
 - Troop count (the AI assistant sim, 2026-10-25, tools/kill_sim.py formula: kills = k·√(own)·√(smaller side)·Atk/Def, equal stats): the smaller side's damage scales about linearly, not by √. 1.8M vs 2.0M: offense wiped, defense keeps 28%; to tie it needs x1.08 on offense and defense (x1.17 total). 1.5M vs 2.0M: defense keeps 50%; tie needs x1.24 each (x1.54 total). Corrects the AI assistant's earlier "√ halves the gap" answer.
 - "Enemy damage taken up" (Petra's Evil Eye, Vivian's Crouching Tiger) is its own group (104), separate from lethality, per Sloth and Frakinator's tests (2026-10-30). Daryl's page and the joiner calculator lump it into 101; they are outranked. Untested: whether Vivian adds on top of a Petra in the same rally, and whether two Vivians add. Vivian is kept out of the pool until that test (no Petra: 3 Chenko + Vivian vs 4 Chenko in Bear).
-- Group 104 does nothing on turn 1 (Sloth). Bear is exactly 10 rounds, so it counts at 9/10 there. PvP battles have no known fixed length, so it counts in full; if PvP fights are short, Petra is worth less in PvP than shown.
+- Group 104 does nothing on turn 1 (Sloth). Bear is exactly 10 rounds, so it counts at 9/10 there. PvP battles can run 20, 30 or more rounds (SE, 2026-10-30), so it counts in full there; a short PvP fight is worth a little less than shown. Vikings is a 3-turn limit (SE), so if a Vikings mode is ever added this group counts 2/3.
 - Debuffs divide by (1 + x): a −25% card leaves the enemy at 80%, the same as +25% for you. Daryl's formula (one Fahd = 1/1.2 = 0.833). If the game instead multiplied by (1 − x), a −25% card would be worth ×1.333 and every best four would change (48/48 Gen 8 teams).
 
 ## Remaining Work
@@ -200,7 +200,7 @@ Key results: the gap between your stats and the enemy's never changes joiner cho
 - [x] Shortlist tool: `node tools/shortlist.js [minGen]` counts how often each joiner lands in the best 4 across every lead team (576 teams Gen 1+, 27 teams Gen 6+). Purpose: a short general PvP preset list, since players only have a few saved formations (SE 2026-10-25).
 - [x] (Done 2026-10-25 as the Likely wanted section) Open question (SE): weight joiners by how common they are. The AI assistant proposal: an "Epic joiners only" toggle (Chenko, Yeonwoo, Amane, Gordon, Howard, Quinn, Fahd, Eric) instead of weighting the math.
 - [x] Wording pass on the live page (2026-10-30: Real gain, footer folded, sources line, both dates).
-- [ ] Decide: knock turn 1 off Petra in PvP too (x0.9, as in Bear), or leave her at full. Unanswered 2026-10-30; she is at full in PvP now.
+- [x] Petra in PvP stays at full value; the page notes the turn 1 delay matters little over 20+ rounds (SE, 2026-10-30).
 - [ ] Gen 9 data (about 6 weeks out, SE 2026-10-30): add leads and joiners to heroes.json, set its `updated` date by hand (it sat at 10-25 through the 10-30 data change), rerun `node tools/build_likely.js`, `node --test tests/`. Next session starts here or at the Vivian test.
 - [ ] The private claude.ai artifact (v60) is stale since the 2026-10-26 public release; the GitHub page is the one to share.
 - [ ] REVIEW (SE): look over the live page (https://somebodyelsegaming.github.io/ks-joiner-calc/) on the iPad; ISC-1, 3, 5, 6, 7, 8 stay open until then.
