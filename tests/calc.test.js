@@ -271,6 +271,18 @@ test('compare: names that cannot be used fall back to the default slot', () => {
   assert.deepStrictEqual(names(C.compareTeam(data, null, def, { ...pvp3, maxGen: 8 })), def);
 });
 
+test('compare: No joiner adds nothing, and an empty team equals the lead team alone', () => {
+  const o = { ...pvp3, maxGen: 8 };
+  const def = ['Chenko', 'Chenko', 'Amane', 'Amane'];
+  const t = C.compareTeam(data, ['No joiner', 'Chenko', 'No joiner', 'Amane'], def, o);
+  assert.deepStrictEqual(t.map(j => j.hero), ['No joiner', 'Chenko', 'No joiner', 'Amane']);
+  const r = C.compareTotals(data, lead, t, o);
+  assert.deepStrictEqual([r.rows[0].value, r.rows[2].value], [1, 1]);
+  assert.ok(near(r.value, (1.75 / 1.5) * (1.5 / 1.25)), r.value);
+  const none = C.compareTeam(data, Array(4).fill('No joiner'), def, o);
+  assert.deepStrictEqual(C.compareTotals(data, lead, none, o).value, 1);
+});
+
 test('compare: a second Petra adds only her extra checks, 43.75% to 49.2% with 3 troop types', () => {
   const by = n => data.joiners.find(j => j.hero === n);
   const o = { ...pvp3, maxGen: 8 };

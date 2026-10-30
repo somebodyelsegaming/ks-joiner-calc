@@ -227,7 +227,7 @@ Your stats are already fixed, so this page sets them aside.
       <p class="cmp-say" id="cmp-say"></p>
       <p class="hint" id="cmp-test"></p>
       <p class="hint">Skills that weaken the enemy count where they land: Ava's enemy defense down is in damage you deal, and Fahd's enemy damage down is in damage you take.</p>
-      <p class="hint">Each slot's gain is counted on top of the slots above it, so reordering changes the slot gains but not the total. Any hero released by your generation can be picked here, even if it's off in your joiner pool; heroes left out of the page (see Notes and assumptions) are not listed. A second Petra only adds more chances to trigger, so she adds far less than the first.</p>
+      <p class="hint">Each slot's gain is counted on top of the slots above it, so reordering changes the slot gains but not the total. Any hero released by your generation can be picked here, even if it's off in your joiner pool; heroes left out of the page (see Notes and assumptions) are not listed. No joiner leaves a slot empty. A second Petra only adds more chances to trigger, so she adds far less than the first.</p>
     </div>
   </details>
 
@@ -516,7 +516,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
     var teams = [
       { key: 'a', name: 'Team A', fallback: bestNames },
       { key: 'b', name: 'Team B', fallback: CMP_B }];
-    var allowed = C.compareHeroes(data, o);
+    var allowed = [C.NO_JOINER].concat(C.compareHeroes(data, o));
     var showTaken = o.mode !== 'bear';
     var active = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.cmp : null;
     teams.forEach(function (t) {
@@ -529,7 +529,7 @@ Them ÷1.25        1,500 ÷ 3,200 = 0.469   same result</pre>
       var slots = t.team.map(function (j, i) {
         var opt = allowed.map(function (c) {
           var sub = c.petra ? 'Enemy dmg taken, chance' : c.effects.map(function (e) { return SHORT[e.id] + ' ' + e.pct; }).join(' + ');
-          return '<option value="' + esc(c.hero) + '"' + (c === j ? ' selected' : '') + '>' + esc(c.hero) + ' (' + esc(sub) + ')</option>';
+          return '<option value="' + esc(c.hero) + '"' + (c === j ? ' selected' : '') + '>' + esc(c.hero) + (sub ? ' (' + esc(sub) + ')' : '') + '</option>';
         }).join('');
         return '<div class="cmp-slot"><select aria-label="' + t.name + ' joiner ' + (i + 1) + '" data-cmp="' + t.key + i + '">' + opt + '</select><span class="val">' + pctAdded(t.totals.rows[i].value) + '</span></div>';
       }).join('');

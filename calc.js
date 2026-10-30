@@ -280,6 +280,9 @@
     return g;
   }
 
+  // An empty compare slot: no skill, so it adds nothing.
+  var NO_JOINER = { hero: 'No joiner', effects: [] };
+
   // Every hero a compare team can pick: the joiner pool chips don't apply, the generation picker does.
   function compareHeroes(data, opts) {
     return data.joiners.filter(function (j) { return !j.exclude && !(opts.maxGen && j.gen > opts.maxGen); });
@@ -289,7 +292,7 @@
   // takes the default team's hero for that slot.
   function compareTeam(data, names, fallback, opts) {
     var allowed = compareHeroes(data, opts);
-    var find = function (n) { return allowed.find(function (j) { return j.hero === n; }); };
+    var find = function (n) { return n === NO_JOINER.hero ? NO_JOINER : allowed.find(function (j) { return j.hero === n; }); };
     return fallback.map(function (f, i) { return find((names || fallback)[i]) || find(f) || allowed[0]; });
   }
 
@@ -323,7 +326,7 @@
     return { value: product(after) / product(before), dealt: bySide('off'), taken: bySide('def'), rows: rows };
   }
 
-  var api = { compareHeroes: compareHeroes, compareTeam: compareTeam, compareTotals: compareTotals, effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
+  var api = { NO_JOINER: NO_JOINER, compareHeroes: compareHeroes, compareTeam: compareTeam, compareTotals: compareTotals, effectsOf: effectsOf, likelyRows: likelyRows, likelyWanted: likelyWanted, abilityKey: abilityKey, rankNext: rankNext, crowdSteps: crowdSteps, teamGroups: teamGroups, leaderCounts: leaderCounts, groupSummary: groupSummary, ofCard: ofCard, petraPct: petraPct, leaderGroups: leaderGroups, product: product, pool: pool,
     teamValue: teamValue, bestLineups: bestLineups, singlePicks: singlePicks,
     breakdown: breakdown, crowding: crowding, leaderContrib: leaderContrib };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
