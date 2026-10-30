@@ -88,7 +88,8 @@
     // for most alliances to fill first: fewest heroes from the two newest generations (fewer
     // players have leveled them; staples such as Ava and Hero Roulette heroes don't count), then fewer different heroes (fewer formations to save).
     // Exact ties then go to older heroes. The rest follow by value.
-    var newest = Math.max.apply(null, data.joiners.map(function (j) { return j.gen || 0; }));
+    // "Newest" is the server's newest generation (opts.maxGen), not the newest in the data file.
+    var newest = Math.min(opts.maxGen || Infinity, Math.max.apply(null, data.joiners.map(function (j) { return j.gen || 0; })));
     var gens = function (t) { return t.reduce(function (n, j) { return n + (j.gen || 0); }, 0); };
     var fresh = function (t) { return t.filter(function (j) { return j.gen >= newest - 1 && !j.staple && !j.wheel; }).length; };
     var kinds = function (t) { return t.filter(function (j, i) { return t.indexOf(j) === i; }).length; };

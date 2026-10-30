@@ -28,8 +28,8 @@
     {"hero": "Petra",    "gen": 3, "effects": [{"id": "101", "pct": 43.75}], "short": "Chance skill: about 43.75% on average with 3 troop types (37.5% with 2). Only one Petra counts.", "wheel": true, "conf": "low", "unique": true, "petra": true,
      "note": "Chance skill, rolled per attack: 50% chance of +50% for each troop type's attack. 3 troop types = 43.75% expected, 2 types = 37.5%. Does not stack: only one Petra per rally counts. Id 101 from the joiner calculator; trigger rate conflicts with that calculator (40%)."},
     {"hero": "Margot",   "gen": 4, "effects": [{"id": "102", "pct": 25}], "conf": "high"},
-    {"hero": "Vivian",   "gen": 5, "effects": [{"id": "101", "pct": 20}], "short": "Card says 25%; about 20% in practice.", "conf": "medium", "exclude": "About 20% in practice, in the same group where Chenko and Yeonwoo give 25%.",
-     "note": "Card says 25%, but it needs a triggering attack; Sloth's testing puts it near 20%."},
+    {"hero": "Vivian",   "gen": 5, "effects": [{"id": "101", "pct": 25}], "short": "Skill group unpublished; left out until tested.", "conf": "low", "exclude": "Skill group unknown: kingshotguides says 101 (a Chenko), kingshotoptimizer says its own code. Mixed Bear results in practice (SE). Left out until a battle test settles it.",
+     "note": "Card (kingshotdata, kingshotoptimizer, 2026-10-30): flat passive, 'All squads' attacks increase enemy damage taken by 25%', no trigger. If it is its own group she lands in every best four; if 101 she ties Chenko."},
     {"hero": "Triton",   "gen": 6, "effects": [{"id": "112", "pct": 25}], "conf": "medium"},
     {"hero": "Ava",      "gen": 7, "effects": [{"id": "301", "pct": 25}], "staple": true, "conf": "medium"},
     {"hero": "Wee & Woo","gen": 7, "effects": [{"id": "102", "pct": 15}, {"id": "101", "pct": 10}], "wheel": true, "conf": "medium"},
@@ -101,7 +101,7 @@
       {"name": "Reckless Charge", "text": "20% chance: 100% extra damage", "id": "other"},
       {"name": "Ancestral Guidance", "text": "After 4 cavalry attacks: damage +25%, taken -25%", "id": "other"}]},
     {"hero": "Vivian", "class": "arc", "gen": 5, "widget": {"skill": "Money Driven", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [
-      {"name": "Crouching Tiger", "text": "Enemy damage taken +25%", "id": "101", "pct": 20, "conf": "medium"},
+      {"name": "Crouching Tiger", "text": "Enemy damage taken +25%", "id": "101", "pct": 25, "conf": "low"},
       {"name": "Focus Fire", "text": "Every 4 attacks: extra damage", "id": "other"},
       {"name": "Trap of Greed", "text": "Every 4 attacks: 60% extra damage", "id": "other"}]},
     {"hero": "Triton", "class": "inf", "gen": 6, "widget": {"skill": "Whale Call", "when": "defend", "stat": "Defense", "pct": 15}, "skills": [

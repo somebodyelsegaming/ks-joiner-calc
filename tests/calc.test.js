@@ -219,6 +219,19 @@ test('data/likely.json matches a fresh computation (rerun tools/build_likely.js 
   assert.deepStrictEqual(saved.gens[8].noPetra.byHero, live.byHero);
 });
 
+test('newest generation follows the gen picker: Gen 7 server treats Triton (Gen 6) as new, so Hilde fills the slot', () => {
+  const o = { ...pvp3, maxGen: 7 };
+  const page = C.bestLineups(data, ['Amadeus', 'Jabel', 'Jaeger'], o, 4, 1)[0].team.map(j => j.hero);
+  assert.ok(page.includes('Hilde') && !page.includes('Triton'), page.join(','));
+  // Every Gen 7 lead team: the page (full data + maxGen) must match the data filtered to Gen 7 (what tools/build_likely.js uses).
+  const d7 = { ...data, joiners: data.joiners.filter(j => j.gen <= 7) };
+  const by = c => data.leaders.filter(l => l.class === c && l.gen <= 7).map(l => l.hero);
+  const names = r => r.team.map(j => j.hero).join(',');
+  for (const i of by('inf')) for (const c of by('cav')) for (const a of by('arc')) {
+    assert.strictEqual(names(C.bestLineups(data, [i, c, a], o, 4, 1)[0]), names(C.bestLineups(d7, [i, c, a], pvp3, 4, 1)[0]), [i, c, a].join('/'));
+  }
+});
+
 test('page stays single column (SE, 2026-10-25)', () => {
   const html = require('fs').readFileSync(require('path').join(__dirname, '../index.html'), 'utf8');
   assert.ok(!/class="layout"|class="col"/.test(html));
